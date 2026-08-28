@@ -103,34 +103,3 @@ data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
 
 if name == "main":
     main()
-
-name: News Bot
-
-on:
-  schedule:
-    - cron: '*/20 * * * *'
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  post-news:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install feedparser requests
-      - run: python news_bot.py
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
-      - name: ذخیره خبرهای ارسال‌شده
-        run: |
-          git config user.name "news-bot"
-          git config user.email "news-bot@users.noreply.github.com"
-          git add posted.txt
-          git commit -m "update posted" || echo "nothing to save"
-          git push
