@@ -39,13 +39,27 @@ def summarize(text, n=3):
     return " ".join(sents[:n])[:300]
 
 def pick_image(entry):
+    url = None
     for key in ("media_content", "media_thumbnail", "links"):
         for m in entry.get(key, []) or []:
             url = m.get("url") or m.get("href")
             if url:
-                return url
-    m = re.search(r'<img[^>]+src="([^"]+)"', entry.get("summary", ""))
-    return m.group(1) if m else None
+                break
+        if url:
+            break
+    if not url:
+        m = re.search(r'<img[^>]+src="([^"]+)"', entry.get("summary", ""))
+        url = m.group(1) if m else None
+    if not url:
+        return None
+    return hires(url)
+
+def hires(url):
+    """جایگزینی تصویر بندانگشتی با نسخهٔ باکیفیت"""
+    for pat in ("thumb_", "_thumb", "/t_", "/tn_", "thumbs/"):
+        if pat in url:
+            return url.replace(pat, "")
+    return url
 
 def main():
     posted = set()
@@ -78,16 +92,15 @@ def main():
     new = 0
     for p in posts:
         k = hashlib.md5(p["title"].encode()).hexdigest()
-        if k in posted:
+
+if k in posted:
             continue
-        tag = "🔴 خبر مهم\n\n" if p["important"] else ""
-        cap = f"{tag}{p['title']}\n\n{p['summ']}"
+        cap = f"{p['title']}\n\n{p['summ']}"
         try:
             if p["img"]:
                 img = requests.get(p["img"], timeout=15).content
                 requests.post(base + "/sendPhoto",
-
-data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
+                              data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
                               files={"photo": img})
             else:
                 requests.post(base + "/sendMessage",
@@ -103,3 +116,4 @@ data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
 
 if __name__ == "__main__":
     main()
+    
