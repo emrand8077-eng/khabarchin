@@ -1,4 +1,3 @@
-Ali:
 import os, re, html, hashlib, feedparser, requests
 
 TOKEN = os.getenv("BOT_TOKEN")
