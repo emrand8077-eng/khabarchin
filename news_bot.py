@@ -101,5 +101,5 @@ data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
     open("posted.txt", "w").write("\n".join(posted))
     print(f"Done. {new} new posts.")
 
-if name == "main":
+if __name__ == "__main__":
     main()
