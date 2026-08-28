@@ -4,11 +4,11 @@ TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL = os.getenv("CHANNEL_ID")
 
 FEEDS = [
-    "https://www.entekhab.ir/fa/rss/allnews",          # انتخاب
-    "https://www.mehrnews.com/rss",                     # مهر
-    "https://feeds.bbci.co.uk/persian/rss.xml",         # بی‌بی‌سی فارسی
-    "https://www.radiofarda.com/rssfeeds",              # رادیو فردا
-    "https://www.aljazeera.com/xml/rss/all.xml",        # الجزیره
+    "https://www.entekhab.ir/fa/rss/allnews",
+    "https://www.mehrnews.com/rss",
+    "https://feeds.bbci.co.uk/persian/rss.xml",
+    "https://www.radiofarda.com/rssfeeds",
+    "https://www.aljazeera.com/xml/rss/all.xml",
     "https://news.google.com/rss/search?q=site:reuters.com+Iran&hl=fa&gl=IR&ceid=IR:fa",
     "https://news.google.com/rss/search?q=site:axios.com+Middle+East&hl=fa&gl=IR&ceid=IR:fa",
     "https://news.google.com/rss/search?q=site:farsnews.ir&hl=fa&gl=IR&ceid=IR:fa",
@@ -34,7 +34,6 @@ def important_score(text):
     return sum(1 for w in KEYWORDS if w in text)
 
 def summarize(text, n=3):
-    """خلاصه‌ساز ساده: جمله‌های دارای کلیدواژه اول میان"""
     sents = [s.strip() for s in re.split(r"[.!?؟]+", text) if len(s.strip()) > 15]
     sents.sort(key=lambda s: -sum(1 for w in KEYWORDS if w in s))
     return " ".join(sents[:n])[:300]
@@ -81,14 +80,14 @@ def main():
         k = hashlib.md5(p["title"].encode()).hexdigest()
         if k in posted:
             continue
-
-tag = "🔴 خبر مهم\n\n" if p["important"] else ""
+        tag = "🔴 خبر مهم\n\n" if p["important"] else ""
         cap = f"{tag}{p['title']}\n\n{p['summ']}"
         try:
             if p["img"]:
                 img = requests.get(p["img"], timeout=15).content
                 requests.post(base + "/sendPhoto",
-                              data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
+
+data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
                               files={"photo": img})
             else:
                 requests.post(base + "/sendMessage",
@@ -104,8 +103,6 @@ tag = "🔴 خبر مهم\n\n" if p["important"] else ""
 
 if name == "main":
     main()
-
-📁 .github/workflows/news.yml — اینم عوض کن:
 
 name: News Bot
 
