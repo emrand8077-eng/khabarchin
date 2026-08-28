@@ -30,15 +30,12 @@ def clean(text, limit=250):
 def is_relevant(text):
     return any(w in text for w in KEYWORDS)
 
-def important_score(text):
-    return sum(1 for w in KEYWORDS if w in text)
-
 def summarize(text, n=3):
     sents = [s.strip() for s in re.split(r"[.!?؟]+", text) if len(s.strip()) > 15]
     sents.sort(key=lambda s: -sum(1 for w in KEYWORDS if w in s))
     return " ".join(sents[:n])[:300]
 
-def pick_image(entry):
+def get_image(entry):
     url = None
     for key in ("media_content", "media_thumbnail", "links"):
         for m in entry.get(key, []) or []:
@@ -52,68 +49,73 @@ def pick_image(entry):
         url = m.group(1) if m else None
     if not url:
         return None
-    return hires(url)
-
-def hires(url):
-    """جایگزینی تصویر بندانگشتی با نسخهٔ باکیفیت"""
     for pat in ("thumb_", "_thumb", "/t_", "/tn_", "thumbs/"):
         if pat in url:
             return url.replace(pat, "")
     return url
 
+def build_post(e):
+    text = e.get("title", "") + " " + e.get("summary", "")
+    if not is_relevant(text):
+        return None
+    important = sum(1 for w in KEYWORDS if w in text) >= 2
+    return {
+        "title": clean(e.get("title", ""), 120),
+        "summ": summarize(e.get("summary", "")) or clean(e.get("summary", ""), 200),
+        "img": get_image(e),
+        "important": important,
+    }
+
+def collect_posts():
+    posts = []
+    seen = set()
+    for url in FEEDS:
+        try:
+            feed = feedparser.parse(url)
+        except Exception as ex:
+            print("ERR", url, ex)
+            continue
+        for e in feed.entries[:10]:
+            p = build_post(e)
+            if not p:
+                continue
+            key = hashlib.md5(e.get("link", e.get("title", "")).encode()).hexdigest()
+            if key in seen:
+                continue
+            seen.add(key)
+            posts.append(p)
+
+posts.sort(key=lambda p: p["important"], reverse=True)
+    return posts
+
+def send(base, cap, img):
+    if img:
+        data = requests.get(img, timeout=15).content
+        return requests.post(base + "/sendPhoto",
+                             data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
+                             files={"photo": data})
+    return requests.post(base + "/sendMessage",
+                         data={"chat_id": CHANNEL, "text": cap, "parse_mode": "HTML"})
+
 def main():
     posted = set()
     if os.path.exists("posted.txt"):
         posted = set(open("posted.txt").read().split())
-
-    posts, seen = [], set()
-    for url in FEEDS:
-        try:
-            for e in feedparser.parse(url).entries[:10]:
-                text = e.get("title", "") + " " + e.get("summary", "")
-                if not is_relevant(text):
-                    continue
-                key = hashlib.md5(e.get("link", e.get("title", "")).encode()).hexdigest()
-                if key in seen:
-                    continue
-                seen.add(key)
-                posts.append({
-                    "title": clean(e.get("title", ""), 120),
-                    "summ": summarize(e.get("summary", "")) or clean(e.get("summary", ""), 200),
-                    "img": pick_image(e),
-                    "important": important_score(text) >= 2,
-                })
-        except Exception as ex:
-            print("ERR", url, ex)
-
-    posts.sort(key=lambda p: p["important"], reverse=True)
-
     base = f"https://api.telegram.org/bot{TOKEN}"
     new = 0
-    for p in posts:
+    for p in collect_posts():
         k = hashlib.md5(p["title"].encode()).hexdigest()
-
-if k in posted:
+        if k in posted:
             continue
         cap = f"{p['title']}\n\n{p['summ']}"
         try:
-            if p["img"]:
-                img = requests.get(p["img"], timeout=15).content
-                requests.post(base + "/sendPhoto",
-                              data={"chat_id": CHANNEL, "caption": cap, "parse_mode": "HTML"},
-                              files={"photo": img})
-            else:
-                requests.post(base + "/sendMessage",
-                              data={"chat_id": CHANNEL, "text": cap, "parse_mode": "HTML"})
+            send(base, cap, p["img"])
             posted.add(k)
             new += 1
             print("POSTED:", p["title"][:50])
         except Exception as ex:
             print("POST_ERR", ex)
-
     open("posted.txt", "w").write("\n".join(posted))
     print(f"Done. {new} new posts.")
 
-if __name__ == "__main__":
-    main()
-    
+main()
