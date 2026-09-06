@@ -953,6 +953,40 @@ def rewrite_summary_with_ai(
         return summary
 
 
+def quality_check(
+    title,
+    summary
+):
+
+    title = normalize(title)
+    summary = normalize(summary)
+
+    # تیتر خیلی کوتاه یا بی‌معنی
+    if len(title) < 15:
+        return False
+
+    # خلاصه خیلی کوتاه
+    if summary and len(summary) < 35:
+        return False
+
+    # تیتر نباید فقط چند کلمه عمومی باشد
+    weak_titles = [
+        "آخرین خبر",
+        "خبر مهم",
+        "جزئیات بیشتر",
+        "واکنش جدید",
+        "خبر جدید",
+        "آخرین اخبار"
+    ]
+
+    for weak in weak_titles:
+
+        if title == normalize(weak):
+            return False
+
+    return True
+
+
 # =========================
 # ساخت پست
 # =========================
