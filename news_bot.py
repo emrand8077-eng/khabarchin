@@ -296,8 +296,7 @@ def is_relevant(
         "اپیزود"
     ]
 
-    # اگر خبر در حوزه‌های سرگرمی، ورزش یا فرهنگی باشد،
-    # فقط در صورت وجود یک موضوع واقعاً مهم اجازه عبور دارد.
+    # موضوعات مهمی که می‌توانند یک خبر مرزی را قابل انتشار کنند
     important_context = [
         "تحریم",
         "جنگ",
@@ -325,6 +324,7 @@ def is_relevant(
         "بودجه"
     ]
 
+    # حذف خبرهای سرگرمی، ورزشی و فرهنگی نامرتبط
     for keyword in excluded_keywords:
 
         if normalize(keyword) in text:
@@ -340,7 +340,54 @@ def is_relevant(
             if not has_important_context:
                 return False
 
-    # کلمات مرتبط با حوزه خبری کانال
+    # ==========================================
+    # منابع خارجی
+    # ==========================================
+
+    if source == "Al Jazeera":
+
+        english_text = (
+            title + " " + summary
+        ).lower()
+
+        # ارتباط مستقیم با ایران
+        iran_related_english = [
+            "iran",
+            "iranian",
+            "tehran",
+            "iran's",
+            "iran’s",
+            "iran nuclear",
+            "iranian nuclear",
+            "iran sanctions",
+            "sanctions on iran",
+            "iranian economy",
+            "iranian government",
+            "iranian president",
+            "iranian foreign minister",
+            "iranian military",
+            "iranian oil",
+            "iranian missiles",
+            "iranian talks",
+            "iran nuclear deal",
+            "nuclear deal with iran",
+            "strait of hormuz",
+            "hormuz"
+        ]
+
+        for keyword in iran_related_english:
+
+            if keyword in english_text:
+                return True
+
+        # در خبرهای خارجی، صرف وجود این کلمات کافی نیست:
+        # america / israel / trump / gaza / lebanon و...
+        return False
+
+    # ==========================================
+    # منابع ایرانی
+    # ==========================================
+
     iran_keywords = [
         "ایران",
         "تهران",
@@ -390,39 +437,6 @@ def is_relevant(
         "خلیج فارس"
     ]
 
-    # منابع خارجی فقط در صورت ارتباط مشخص با ایران یا منطقه
-    if source == "Al Jazeera":
-
-        english_text = (
-            title + " " + summary
-        ).lower()
-
-        english_keywords = [
-            "iran",
-            "iranian",
-            "tehran",
-            "israel",
-            "israeli",
-            "trump",
-            "sanctions",
-            "nuclear",
-            "missile",
-            "strait of hormuz",
-            "hormuz",
-            "iraq",
-            "lebanon",
-            "gaza",
-            "iranian economy"
-        ]
-
-        for keyword in english_keywords:
-
-            if keyword in english_text:
-                return True
-
-        return False
-
-    # منابع ایرانی فقط در صورت ارتباط با حوزه‌های موردنظر
     for keyword in iran_keywords:
 
         if normalize(keyword) in text:
