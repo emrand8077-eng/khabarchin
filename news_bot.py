@@ -265,44 +265,93 @@ def is_relevant(
         title + " " + summary
     )
 
-    # منابع ایرانی
-    if source in [
-        "IRNA",
-        "Tasnim",
-        "Entekhab",
-        "Mehr"
-    ]:
-        return True
-
-    # منابع خارجی
-    for keyword in KEYWORDS:
-
-        if normalize(keyword) in text:
-            return True
-
-    # کلمات انگلیسی برای الجزیره
-    english_text = (
-        title + " " + summary
-    ).lower()
-
-    english_keywords = [
-        "iran",
-        "iranian",
-        "tehran",
-        "israel",
-        "israeli",
-        "trump",
-        "sanctions",
-        "nuclear",
-        "missile",
-        "strait of hormuz",
-        "hormuz",
-        "iranian economy"
+    # کلمات مرتبط با ایران و موضوعات موردنظر
+    iran_keywords = [
+        "ایران",
+        "تهران",
+        "دولت",
+        "مجلس",
+        "رئیس جمهور",
+        "رئیس‌جمهور",
+        "خامنه‌ای",
+        "رهبر",
+        "سپاه",
+        "ارتش",
+        "تحریم",
+        "برجام",
+        "مذاکره",
+        "آمریکا",
+        "اسرائیل",
+        "اقتصاد",
+        "تورم",
+        "دلار",
+        "ارز",
+        "بانک مرکزی",
+        "نفت",
+        "گاز",
+        "بنزین",
+        "بودجه",
+        "بورس",
+        "انتخابات",
+        "وزیر",
+        "وزارت",
+        "قوه قضائیه",
+        "اعتراض",
+        "اعتصاب",
+        "زلزله",
+        "سیل",
+        "حادثه",
+        "انفجار",
+        "آتش‌سوزی",
+        "قطعی برق",
+        "خاموشی",
+        "تنگه هرمز",
+        "هرمز",
+        "غزه",
+        "لبنان",
+        "عراق",
+        "سوریه",
+        "خلیج فارس"
     ]
 
-    for keyword in english_keywords:
+    # خبرهای خارجی فقط وقتی پذیرفته شوند
+    # که ارتباط مشخصی با ایران یا منطقه داشته باشند
+    if source == "Al Jazeera":
 
-        if keyword in english_text:
+        english_text = (
+            title + " " + summary
+        ).lower()
+
+        english_keywords = [
+            "iran",
+            "iranian",
+            "tehran",
+            "israel",
+            "israeli",
+            "trump",
+            "sanctions",
+            "nuclear",
+            "missile",
+            "strait of hormuz",
+            "hormuz",
+            "iraq",
+            "lebanon",
+            "gaza",
+            "iranian economy"
+        ]
+
+        for keyword in english_keywords:
+
+            if keyword in english_text:
+                return True
+
+        return False
+
+    # منابع ایرانی فقط اگر موضوع خبر
+    # در حوزه‌های موردنظر ما باشد
+    for keyword in iran_keywords:
+
+        if normalize(keyword) in text:
             return True
 
     return False
