@@ -59,18 +59,23 @@ ENGLISH_KEYWORDS = [
 ]
 
 # منابع فعلی پروژه
+
 FEEDS = [
     (
         "Entekhab",
-        "https://news.google.com/rss/search?q=site%3Aentekhab.ir+Iran&hl=fa&gl=IR&ceid=IR%3Afa"
+        "https://www.entekhab.ir/fa/rss/allnews"
     ),
     (
         "Tasnim",
-        "https://news.google.com/rss/search?q=site%3Atasnimnews.com+Iran&hl=fa&gl=IR&ceid=IR%3Afa"
+        "https://www.tasnimnews.ir/fa/rss"
     ),
     (
         "IRNA",
-        "https://news.google.com/rss/search?q=site%3Airna.ir+Iran&hl=fa&gl=IR&ceid=IR%3Afa"
+        "https://www.irna.ir/rss"
+    ),
+    (
+        "Mehr",
+        "https://en.mehrnews.com/rss"
     ),
     (
         "Al Jazeera",
