@@ -21,7 +21,7 @@ TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 POSTED_FILE = "posted.txt"
 MAX_POSTED = 1000
 
-# فقط خبرهایی که واقعاً به موضوعات مهم ایران مربوط باشند
+# فقط خبرهایی که به موضوعات مهم ایران مربوط باشند
 KEYWORDS = [
     "ایران", "تهران", "دولت", "مجلس", "رئیس جمهور", "رئیس‌جمهور",
     "خامنه‌ای", "رهبر", "سپاه", "ارتش", "نیروی انتظامی",
@@ -33,19 +33,49 @@ KEYWORDS = [
     "انفجار", "آتش‌سوزی", "قطعی برق", "خاموشی"
 ]
 
+# کلمات مربوط به خبرهای مهم
 IMPORTANT_WORDS = [
     "تحریم", "جنگ", "حمله", "موشک", "هسته‌ای", "هسته ای",
     "مذاکره", "برجام", "دلار", "تورم", "نفت", "بنزین",
-    "انتخابات", "رئیس جمهور", "خامنه‌ای", "سپاه", "مجلس",
-    "اعتراض", "زلزله", "سیل", "انفجار"
+    "انتخابات", "رئیس جمهور", "رئیس‌جمهور", "خامنه‌ای",
+    "سپاه", "مجلس", "اعتراض", "زلزله", "سیل", "انفجار",
+    "آمریکا", "اسرائیل", "بانک مرکزی", "بودجه"
+]
+
+# کلمات انگلیسی برای تشخیص خبرهای مرتبط با ایران در منابع خارجی
+ENGLISH_KEYWORDS = [
+    "iran", "iranian", "tehran",
+    "israel", "israeli",
+    "united states", "u.s.",
+    "trump",
+    "sanctions",
+    "nuclear",
+    "missile",
+    "war",
+    "strike",
+    "attack",
+    "oil",
+    "iranian economy"
 ]
 
 # منابع فعلی پروژه
 FEEDS = [
-    ("Entekhab", "https://news.google.com/rss/search?q=site%3Aentekhab.ir+Iran&hl=fa&gl=IR&ceid=IR%3Afa"),
-    ("Tasnim", "https://news.google.com/rss/search?q=site%3Atasnimnews.com+Iran&hl=fa&gl=IR&ceid=IR%3Afa"),
-    ("IRNA", "https://news.google.com/rss/search?q=site%3Airna.ir+Iran&hl=fa&gl=IR&ceid=IR%3Afa"),
-    ("Al Jazeera", "https://www.aljazeera.com/xml/rss/all.xml"),
+    (
+        "Entekhab",
+        "https://news.google.com/rss/search?q=site%3Aentekhab.ir+Iran&hl=fa&gl=IR&ceid=IR%3Afa"
+    ),
+    (
+        "Tasnim",
+        "https://news.google.com/rss/search?q=site%3Atasnimnews.com+Iran&hl=fa&gl=IR&ceid=IR%3Afa"
+    ),
+    (
+        "IRNA",
+        "https://news.google.com/rss/search?q=site%3Airna.ir+Iran&hl=fa&gl=IR&ceid=IR%3Afa"
+    ),
+    (
+        "Al Jazeera",
+        "https://www.aljazeera.com/xml/rss/all.xml"
+    ),
 ]
 
 # =========================
@@ -59,6 +89,7 @@ def clean_text(text):
     text = html.unescape(text)
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"\s+", " ", text)
+
     return text.strip()
 
 
@@ -81,7 +112,10 @@ def normalize(text):
 
 def make_id(title, link):
     value = normalize(title) + "|" + link
-    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+    return hashlib.sha256(
+        value.encode("utf-8")
+    ).hexdigest()
 
 
 def load_posted():
@@ -90,7 +124,12 @@ def load_posted():
 
     try:
         with open(POSTED_FILE, "r", encoding="utf-8") as f:
-            return {line.strip() for line in f if line.strip()}
+            return {
+                line.strip()
+                for line in f
+                if line.strip()
+            }
+
     except Exception:
         return set()
 
@@ -103,24 +142,59 @@ def save_posted(posted):
             f.write(item + "\n")
 
 
-def is_relevant(title, summary):
-    text = normalize(title + " " + summary)
+# =========================
+# تشخیص مرتبط بودن خبر
+# =========================
 
-    matches = 0
+def is_relevant(title, summary, source):
 
+    text = normalize(
+        title + " " + summary
+    )
+
+    # منابع ایرانی ما از ابتدا با جست‌وجوی Iran انتخاب شده‌اند.
+    # بنابراین اگر از این منابع خبر آمده باشد،
+    # آن را مرتبط با موضوع ایران در نظر می‌گیریم.
+    if source in [
+        "IRNA",
+        "Tasnim",
+        "Entekhab"
+    ]:
+        return True
+
+    # برای منابع عمومی مثل الجزیره،
+    # باید خود خبر ارتباط مشخصی با ایران داشته باشد.
+
+    # بررسی کلمات فارسی
     for keyword in KEYWORDS:
         if normalize(keyword) in text:
-            matches += 1
+            return True
 
-    return matches >= 1
+    # بررسی کلمات انگلیسی
+    english_text = clean_text(
+        title + " " + summary
+    ).lower()
 
+    for keyword in ENGLISH_KEYWORDS:
+        if keyword in english_text:
+            return True
+
+    return False
+
+
+# =========================
+# امتیاز اهمیت خبر
+# =========================
 
 def importance_score(title, summary, source):
-    text = normalize(title + " " + summary)
+
+    text = normalize(
+        title + " " + summary
+    )
 
     score = 0
 
-    # ارتباط با ایران
+    # ارتباط مستقیم با ایران
     if "ایران" in text or "تهران" in text:
         score += 3
 
@@ -139,22 +213,45 @@ def importance_score(title, summary, source):
 
     score += trusted.get(source, 0)
 
+    # چون منابع ایرانی با جست‌وجوی ایران انتخاب شده‌اند،
+    # یک امتیاز پایه برای ارتباط آن‌ها با ایران می‌دهیم.
+    if source in [
+        "IRNA",
+        "Tasnim",
+        "Entekhab"
+    ]:
+        score += 2
+
     return score
 
 
+# =========================
+# تشخیص خبرهای مشابه
+# =========================
+
 def similar(a, b):
+
     a = normalize(a)
     b = normalize(b)
 
     if not a or not b:
         return False
 
-    ratio = SequenceMatcher(None, a, b).ratio()
+    ratio = SequenceMatcher(
+        None,
+        a,
+        b
+    ).ratio()
 
     return ratio >= 0.78
 
 
+# =========================
+# ساخت پست تلگرام
+# =========================
+
 def make_post(title, summary):
+
     title = clean_text(title)
     summary = clean_text(summary)
 
@@ -166,7 +263,8 @@ def make_post(title, summary):
     if len(summary) > 500:
         summary = summary[:497].rstrip() + "..."
 
-    # اگر خلاصه خیلی شبیه تیتر بود، حذفش می‌کنیم
+    # اگر خلاصه خیلی شبیه تیتر بود،
+    # فقط تیتر منتشر می‌شود.
     if similar(title, summary):
         return f"<b>{html.escape(title)}</b>"
 
@@ -177,11 +275,13 @@ def make_post(title, summary):
 
 
 # =========================
-# دریافت خبر
+# دریافت خبر از RSS
 # =========================
 
 def fetch_feed(source, url):
+
     try:
+
         response = requests.get(
             url,
             timeout=20,
@@ -192,14 +292,22 @@ def fetch_feed(source, url):
 
         response.raise_for_status()
 
-        feed = feedparser.parse(response.content)
+        feed = feedparser.parse(
+            response.content
+        )
 
         results = []
 
         for entry in feed.entries[:20]:
-            title = clean_text(entry.get("title", ""))
 
-            link = entry.get("link", "")
+            title = clean_text(
+                entry.get("title", "")
+            )
+
+            link = entry.get(
+                "link",
+                ""
+            )
 
             summary = clean_text(
                 entry.get("summary", "")
@@ -219,15 +327,22 @@ def fetch_feed(source, url):
         return results
 
     except Exception as e:
-        print(f"[ERROR] {source}: {e}")
+
+        print(
+            f"[ERROR] {source}: {e}"
+        )
+
+        # اگر یک منبع خراب باشد،
+        # بقیه منابع همچنان کار می‌کنند.
         return []
 
 
 # =========================
-# ارسال به تلگرام
+# ارسال پیام به تلگرام
 # =========================
 
 def send_message(text):
+
     url = f"{TELEGRAM_API}/sendMessage"
 
     response = requests.post(
@@ -242,7 +357,12 @@ def send_message(text):
     )
 
     if not response.ok:
-        print("Telegram error:", response.text)
+
+        print(
+            "Telegram error:",
+            response.text
+        )
+
         return False
 
     return True
@@ -254,51 +374,87 @@ def send_message(text):
 
 def main():
 
-    print("News bot started.")
+    print(
+        "News bot started."
+    )
 
     posted = load_posted()
 
     all_news = []
 
+    # دریافت خبر از تمام منابع
     for source, url in FEEDS:
-        news = fetch_feed(source, url)
 
-        print(f"{source}: {len(news)} news")
+        news = fetch_feed(
+            source,
+            url
+        )
+
+        print(
+            f"{source}: {len(news)} news"
+        )
 
         all_news.extend(news)
 
-    # حذف خبرهای تکراری داخل همین اجرا
+    # =========================
+    # حذف خبرهای تکراری
+    # =========================
+
     unique_news = []
+
     titles = []
 
     for item in all_news:
 
-        news_id = make_id(item["title"], item["link"])
+        news_id = make_id(
+            item["title"],
+            item["link"]
+        )
 
+        # قبلاً منتشر شده
         if news_id in posted:
             continue
 
+        # بررسی شباهت با خبرهای همین اجرا
         duplicate = False
 
         for old_title in titles:
-            if similar(item["title"], old_title):
+
+            if similar(
+                item["title"],
+                old_title
+            ):
                 duplicate = True
                 break
 
         if duplicate:
             continue
 
-        titles.append(item["title"])
-        unique_news.append(item)
+        titles.append(
+            item["title"]
+        )
 
-    print(f"New unique news: {len(unique_news)}")
+        unique_news.append(
+            item
+        )
 
+    print(
+        f"New unique news: {len(unique_news)}"
+    )
+
+    # =========================
     # امتیازدهی
+    # =========================
+
     scored = []
 
     for item in unique_news:
 
-        if not is_relevant(item["title"], item["summary"]):
+        if not is_relevant(
+            item["title"],
+            item["summary"],
+            item["source"]
+        ):
             continue
 
         score = importance_score(
@@ -309,11 +465,13 @@ def main():
 
         item["score"] = score
 
-        # فعلاً فقط خبرهای نسبتاً مهم
+        # فقط خبرهای نسبتاً مهم
         if score >= 4:
-            scored.append(item)
+            scored.append(
+                item
+            )
 
-    # مهم‌ترین‌ها اول
+    # مهم‌ترین خبرها اول
     scored.sort(
         key=lambda x: x["score"],
         reverse=True
@@ -322,7 +480,13 @@ def main():
     # حداکثر 3 خبر در هر اجرا
     scored = scored[:3]
 
-    print(f"Selected news: {len(scored)}")
+    print(
+        f"Selected news: {len(scored)}"
+    )
+
+    # =========================
+    # انتشار
+    # =========================
 
     for item in scored:
 
@@ -331,27 +495,49 @@ def main():
             item["summary"]
         )
 
-        print("Publishing:", item["title"])
+        print(
+            "Publishing:",
+            item["title"]
+        )
 
-        success = send_message(post)
+        success = send_message(
+            post
+        )
 
         if success:
+
             news_id = make_id(
                 item["title"],
                 item["link"]
             )
 
-            posted.add(news_id)
+            posted.add(
+                news_id
+            )
 
-            print("Published successfully.")
+            print(
+                "Published successfully."
+            )
 
         else:
-            print("Publish failed.")
 
-    save_posted(posted)
+            print(
+                "Publish failed."
+            )
 
-    print("News bot finished.")
+    # ذخیره خبرهای منتشرشده
+    save_posted(
+        posted
+    )
 
+    print(
+        "News bot finished."
+    )
+
+
+# =========================
+# شروع برنامه
+# =========================
 
 if __name__ == "__main__":
     main()
