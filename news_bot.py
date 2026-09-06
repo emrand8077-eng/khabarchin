@@ -591,12 +591,33 @@ def clean_title(title):
 
     title = clean_text(title)
 
-    # اگر تیتر چند بخش با / داشته باشد،
-    # فقط بخش اول را نگه می‌داریم.
+    if not title:
+        return ""
+
+    # حذف نام خبرگزاری یا عبارت‌های ابتدای تیتر
+    prefixes = [
+        "تهران - ایرنا -",
+        "تهران- ایرنا-",
+        "تهران – ایرنا -",
+        "تهران – ایرنا –",
+        "ایرنا -",
+        "ایرنا:",
+        "رویترز:",
+        "رویترز -",
+        "به گزارش ایرنا:",
+        "به گزارش ایرنا -"
+    ]
+
+    for prefix in prefixes:
+
+        if title.startswith(prefix):
+            title = title[len(prefix):].strip()
+
+    # اگر تیتر چند بخش با / یا | داشته باشد،
+    # فقط بخش اصلی را نگه می‌داریم.
     if " / " in title:
         title = title.split(" / ")[0].strip()
 
-    # حذف بخش‌های بعد از |
     if " | " in title:
         title = title.split(" | ")[0].strip()
 
@@ -607,13 +628,29 @@ def clean_title(title):
         title
     ).strip()
 
-    # حداکثر طول تیتر
-    if len(title) > 130:
-        title = (
-            title[:127]
-            .rsplit(" ", 1)[0]
-            + "..."
+    # اگر تیتر خیلی طولانی بود،
+    # ترجیحاً در یک جداکننده مناسب کوتاهش کن.
+    if len(title) > 110:
+
+        shortened = title[:110]
+
+        last_break = max(
+            shortened.rfind("؛"),
+            shortened.rfind("،"),
+            shortened.rfind(":"),
+            shortened.rfind("-"),
+            shortened.rfind("–")
         )
+
+        if last_break > 55:
+            title = shortened[:last_break].strip()
+
+        else:
+            title = (
+                shortened
+                .rsplit(" ", 1)[0]
+                + "..."
+            )
 
     return title
 
