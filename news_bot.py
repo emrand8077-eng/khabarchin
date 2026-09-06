@@ -711,7 +711,7 @@ def clean_title(title):
         if title.startswith(prefix):
             title = title[len(prefix):].strip()
 
-    # حذف بعضی عبارت‌های کلیشه‌ای که ارزش خبری اضافه نمی‌کنند
+    # حذف بعضی عبارت‌های کلیشه‌ای
     soft_words = [
         "عجیب و غریب",
         "باورنکردنی",
@@ -728,20 +728,19 @@ def clean_title(title):
             ""
         )
 
-    # اگر حذف عبارت باعث فاصله اضافی شد
-    title = re.sub(
-        r"\s+",
-        " ",
-        title
-    ).strip()
-
-    # اگر تیتر چند بخش با / یا | داشته باشد،
-    # فقط بخش اصلی را نگه می‌داریم.
+    # جدا کردن بخش‌های مختلف تیتر
     if " / " in title:
         title = title.split(" / ")[0].strip()
 
     if " | " in title:
         title = title.split(" | ")[0].strip()
+
+    # حذف فاصله‌های اضافی
+    title = re.sub(
+        r"\s+",
+        " ",
+        title
+    ).strip()
 
     # حذف فاصله قبل از علائم نگارشی
     title = re.sub(
@@ -750,28 +749,48 @@ def clean_title(title):
         title
     ).strip()
 
-    # اگر تیتر خیلی طولانی بود
+    # اگر تیتر خیلی طولانی بود،
+    # اولویت با پایان کامل جمله است.
     if len(title) > 110:
 
         shortened = title[:110]
 
+        # آخرین نقطه مناسب برای بریدن
         last_break = max(
             shortened.rfind("؛"),
             shortened.rfind("،"),
-            shortened.rfind(":"),
-            shortened.rfind("-"),
-            shortened.rfind("–")
+            shortened.rfind("؟"),
+            shortened.rfind("!")
         )
 
-        if last_break > 55:
-            title = shortened[:last_break].strip()
+        if last_break >= 60:
+
+            title = shortened[
+                :last_break + 1
+            ].strip()
 
         else:
+
+            # اگر جداکننده مناسبی نبود،
+            # از آخرین فاصله استفاده می‌کنیم
             title = (
                 shortened
                 .rsplit(" ", 1)[0]
-                + "..."
+                .strip()
             )
+
+    # حذف سه‌نقطه‌های باقی‌مانده از انتهای تیتر
+    title = re.sub(
+        r"\.{3,}$",
+        "",
+        title
+    ).strip()
+
+    title = re.sub(
+        r"…+$",
+        "",
+        title
+    ).strip()
 
     return title
 
