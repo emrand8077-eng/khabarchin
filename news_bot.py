@@ -1010,19 +1010,11 @@ def quality_check(
 # ساخت پست
 # =========================
 
-def make_post(
-    title,
-    summary
-):
+def make_post(title, summary):
 
-    title = clean_title(
-        title
-    )
+    title = clean_title(title)
 
-    summary = make_summary(
-        title,
-        summary
-    )
+    summary = make_summary(title, summary)
 
     if not title:
         return None
@@ -1032,10 +1024,12 @@ def make_post(
 
     if summary:
 
-        summary = rewrite_summary_with_ai(
-            title,
-            summary
-        )
+        if len(summary) > 180:
+
+            summary = rewrite_summary_with_ai(
+                title,
+                summary
+            )
 
         if not quality_check(
             title,
@@ -1049,15 +1043,10 @@ def make_post(
             f"{html.escape(summary)}"
         )
 
-    if not quality_check(
-        title,
-        ""
-    ):
+    if not quality_check(title, ""):
         return None
 
-    return (
-        f"<b>{html.escape(title)}</b>"
-    )
+    return f"<b>{html.escape(title)}</b>"
 
 
 # =========================
