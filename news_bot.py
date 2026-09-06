@@ -434,28 +434,50 @@ def make_summary(
     if not summary:
         return ""
 
-    # اگر خلاصه همان تیتر است
-    if similar(
-        title,
-        summary
-    ):
+    # اگر خلاصه خیلی شبیه تیتر است، حذف شود
+    if similar(title, summary):
         return ""
 
-    # حذف برخی عبارت‌های اضافی
+    # فاصله‌های اضافی
     summary = re.sub(
         r"\s+",
         " ",
         summary
     ).strip()
 
-    # کوتاه کردن خلاصه
-    if len(summary) > 450:
+    # حذف عبارت‌های تبلیغاتی و غیرضروری ابتدای متن
+    prefixes = [
+        "به گزارش ",
+        "به نقل از ",
+        "در این گزارش ",
+        "در همین رابطه "
+    ]
 
-        summary = (
-            summary[:447]
-            .rsplit(" ", 1)[0]
-            + "..."
+    for prefix in prefixes:
+
+        if summary.startswith(prefix):
+            summary = summary[len(prefix):].strip()
+
+    # حداکثر طول خلاصه
+    if len(summary) > 320:
+
+        shortened = summary[:320]
+
+        # ترجیحاً از آخرین جمله کامل استفاده کن
+        last_dot = max(
+            shortened.rfind("،"),
+            shortened.rfind("."),
+            shortened.rfind("؛")
         )
+
+        if last_dot > 180:
+            summary = shortened[:last_dot + 1].strip()
+        else:
+            summary = (
+                shortened
+                .rsplit(" ", 1)[0]
+                + "..."
+            )
 
     return summary
 
