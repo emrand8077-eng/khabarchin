@@ -619,23 +619,24 @@ def make_summary(
     if not summary:
         return ""
 
-    # اگر خلاصه خیلی شبیه تیتر است، حذف شود
+    # اگر خلاصه تقریباً همان تیتر است، دوباره تکرارش نکن
     if similar(title, summary):
         return ""
 
-    # فاصله‌های اضافی
     summary = re.sub(
         r"\s+",
         " ",
         summary
     ).strip()
 
-    # حذف عبارت‌های تبلیغاتی و غیرضروری ابتدای متن
+    # حذف عبارت‌های رایج خبرگزاری‌ها
     prefixes = [
         "به گزارش ",
         "به نقل از ",
         "در این گزارش ",
-        "در همین رابطه "
+        "در همین رابطه ",
+        "به گزارش خبرنگار ",
+        "به نقل از خبرنگار "
     ]
 
     for prefix in prefixes:
@@ -643,20 +644,34 @@ def make_summary(
         if summary.startswith(prefix):
             summary = summary[len(prefix):].strip()
 
-    # حداکثر طول خلاصه
-    if len(summary) > 320:
+    # حذف بعضی عبارت‌های انتهایی غیرضروری
+    endings = [
+        "گفت:",
+        "افزود:",
+        "اظهار کرد:",
+        "اعلام کرد:"
+    ]
 
-        shortened = summary[:320]
+    for ending in endings:
 
-        # ترجیحاً از آخرین جمله کامل استفاده کن
-        last_dot = max(
+        if summary.endswith(ending):
+            summary = summary[:-len(ending)].strip()
+
+    # کوتاه کردن متن
+    if len(summary) > 300:
+
+        shortened = summary[:300]
+
+        last_break = max(
             shortened.rfind("،"),
             shortened.rfind("."),
-            shortened.rfind("؛")
+            shortened.rfind("؛"),
+            shortened.rfind("، ")
         )
 
-        if last_dot > 180:
-            summary = shortened[:last_dot + 1].strip()
+        if last_break > 160:
+            summary = shortened[:last_break + 1].strip()
+
         else:
             summary = (
                 shortened
