@@ -606,10 +606,52 @@ def similar(a, b):
     shorter = min(len(a), len(b))
     longer = max(len(a), len(b))
 
-    if shorter >= 35:
-        if shorter / longer >= 0.70:
+    if shorter >= 30:
+
+        if shorter / longer >= 0.65:
+
             if a in b or b in a:
                 return True
+
+    # حذف بعضی کلمات عمومی برای مقایسه بهتر
+    common_words = [
+        "گفت",
+        "اعلام کرد",
+        "خبر داد",
+        "اظهار کرد",
+        "تاکید کرد",
+        "تأکید کرد",
+        "عنوان کرد",
+        "افزود",
+        "در گفت‌وگو",
+        "در گفتگو",
+        "آخرین",
+        "جدیدترین"
+    ]
+
+    for word in common_words:
+
+        a = a.replace(
+            normalize(word),
+            " "
+        )
+
+        b = b.replace(
+            normalize(word),
+            " "
+        )
+
+    a = re.sub(
+        r"\s+",
+        " ",
+        a
+    ).strip()
+
+    b = re.sub(
+        r"\s+",
+        " ",
+        b
+    ).strip()
 
     # مقایسه شباهت کلی
     ratio = SequenceMatcher(
@@ -618,7 +660,7 @@ def similar(a, b):
         b
     ).ratio()
 
-    return ratio >= 0.72
+    return ratio >= 0.68
 
 
 # =========================
