@@ -687,7 +687,10 @@ def make_summary(
         "در این گزارش ",
         "در همین رابطه ",
         "به گزارش خبرنگار ",
-        "به نقل از خبرنگار "
+        "به نقل از خبرنگار ",
+        "وی در ادامه گفت:",
+        "وی افزود:",
+        "او افزود:"
     ]
 
     for prefix in prefixes:
@@ -695,18 +698,41 @@ def make_summary(
         if summary.startswith(prefix):
             summary = summary[len(prefix):].strip()
 
-    # حذف بعضی عبارت‌های انتهایی غیرضروری
-    endings = [
-        "گفت:",
-        "افزود:",
-        "اظهار کرد:",
-        "اعلام کرد:"
+    # حذف عبارت‌های تبلیغاتی یا ادبی رایج
+    soft_phrases = [
+        "حماسه‌آفرینی",
+        "حماسه آفرینی",
+        "حماسه‌ها",
+        "حماسه ها",
+        "لحظه‌ای تردید نمی‌کنند",
+        "لحظه ای تردید نمی کنند",
+        "با افتخار",
+        "مایه افتخار",
+        "دشمن‌شکن",
+        "دشمن شکن",
+        "تاریخی و ماندگار"
     ]
 
-    for ending in endings:
+    for phrase in soft_phrases:
 
-        if summary.endswith(ending):
-            summary = summary[:-len(ending)].strip()
+        summary = summary.replace(
+            phrase,
+            ""
+        )
+
+    # مرتب کردن فاصله‌ها بعد از حذف عبارت‌ها
+    summary = re.sub(
+        r"\s+",
+        " ",
+        summary
+    ).strip()
+
+    # حذف نشانه‌های اضافی ابتدای متن
+    summary = re.sub(
+        r"^[،؛:.\-–—]+\s*",
+        "",
+        summary
+    ).strip()
 
     # کوتاه کردن متن
     if len(summary) > 300:
@@ -717,7 +743,7 @@ def make_summary(
             shortened.rfind("،"),
             shortened.rfind("."),
             shortened.rfind("؛"),
-            shortened.rfind("، ")
+            shortened.rfind("؟")
         )
 
         if last_break > 160:
