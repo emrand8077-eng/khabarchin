@@ -14,51 +14,77 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHANNEL_ID = os.environ.get("CHANNEL_ID")
 
 if not BOT_TOKEN or not CHANNEL_ID:
-    raise RuntimeError("BOT_TOKEN یا CHANNEL_ID در GitHub Secrets پیدا نشد.")
+    raise RuntimeError(
+        "BOT_TOKEN یا CHANNEL_ID در GitHub Secrets پیدا نشد."
+    )
 
 TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 POSTED_FILE = "posted.txt"
 MAX_POSTED = 1000
 
-# فقط خبرهایی که به موضوعات مهم ایران مربوط باشند
+# =========================
+# کلمات مرتبط با ایران
+# =========================
+
 KEYWORDS = [
-    "ایران", "تهران", "دولت", "مجلس", "رئیس جمهور", "رئیس‌جمهور",
-    "خامنه‌ای", "رهبر", "سپاه", "ارتش", "نیروی انتظامی",
-    "تحریم", "برجام", "مذاکره", "آمریکا", "اسرائیل",
-    "اقتصاد", "تورم", "دلار", "ارز", "بانک مرکزی",
-    "نفت", "گاز", "بنزین", "بودجه", "بورس",
-    "انتخابات", "وزیر", "وزارت", "قوه قضائیه",
-    "اعتراض", "اعتصاب", "زلزله", "سیل", "حادثه",
-    "انفجار", "آتش‌سوزی", "قطعی برق", "خاموشی"
+    "ایران", "تهران", "دولت", "مجلس",
+    "رئیس جمهور", "رئیس‌جمهور",
+    "خامنه‌ای", "رهبر",
+    "سپاه", "ارتش", "نیروی انتظامی",
+    "تحریم", "برجام", "مذاکره",
+    "آمریکا", "اسرائیل",
+    "اقتصاد", "تورم", "دلار", "ارز",
+    "بانک مرکزی", "نفت", "گاز", "بنزین",
+    "بودجه", "بورس", "انتخابات",
+    "وزیر", "وزارت", "قوه قضائیه",
+    "اعتراض", "اعتصاب",
+    "زلزله", "سیل", "حادثه",
+    "انفجار", "آتش‌سوزی",
+    "قطعی برق", "خاموشی",
+    "تنگه هرمز", "هرمز",
+    "غزه", "لبنان", "عراق", "سوریه",
+    "خلیج فارس"
 ]
 
-# کلمات مربوط به خبرهای مهم
+# =========================
+# کلمات خبرهای مهم
+# =========================
+
 IMPORTANT_WORDS = [
-    "تحریم", "جنگ", "حمله", "موشک", "هسته‌ای", "هسته ای",
-    "مذاکره", "برجام", "دلار", "تورم", "نفت", "بنزین",
-    "انتخابات", "رئیس جمهور", "رئیس‌جمهور", "خامنه‌ای",
-    "سپاه", "مجلس", "اعتراض", "زلزله", "سیل", "انفجار",
-    "آمریکا", "اسرائیل", "بانک مرکزی", "بودجه"
+    "تحریم",
+    "جنگ",
+    "حمله",
+    "موشک",
+    "هسته‌ای",
+    "هسته ای",
+    "مذاکره",
+    "برجام",
+    "دلار",
+    "تورم",
+    "نفت",
+    "بنزین",
+    "انتخابات",
+    "رئیس جمهور",
+    "رئیس‌جمهور",
+    "خامنه‌ای",
+    "سپاه",
+    "مجلس",
+    "اعتراض",
+    "زلزله",
+    "سیل",
+    "انفجار",
+    "آمریکا",
+    "اسرائیل",
+    "بانک مرکزی",
+    "بودجه",
+    "تنگه هرمز",
+    "هرمز"
 ]
 
-# کلمات انگلیسی برای تشخیص خبرهای مرتبط با ایران در منابع خارجی
-ENGLISH_KEYWORDS = [
-    "iran", "iranian", "tehran",
-    "israel", "israeli",
-    "united states", "u.s.",
-    "trump",
-    "sanctions",
-    "nuclear",
-    "missile",
-    "war",
-    "strike",
-    "attack",
-    "oil",
-    "iranian economy"
-]
-
-# منابع فعلی پروژه
+# =========================
+# منابع
+# =========================
 
 FEEDS = [
     (
@@ -84,21 +110,37 @@ FEEDS = [
 ]
 
 # =========================
-# ابزارها
+# پاک‌سازی متن
 # =========================
 
 def clean_text(text):
+
     if not text:
         return ""
 
     text = html.unescape(text)
-    text = re.sub(r"<[^>]+>", " ", text)
-    text = re.sub(r"\s+", " ", text)
+
+    text = re.sub(
+        r"<[^>]+>",
+        " ",
+        text
+    )
+
+    text = re.sub(
+        r"\s+",
+        " ",
+        text
+    )
 
     return text.strip()
 
 
+# =========================
+# نرمال‌سازی فارسی
+# =========================
+
 def normalize(text):
+
     text = clean_text(text).lower()
 
     replacements = {
@@ -107,6 +149,7 @@ def normalize(text):
         "ك": "ک",
         "ۀ": "ه",
         "ة": "ه",
+        "‌": " ",
     }
 
     for old, new in replacements.items():
@@ -115,20 +158,42 @@ def normalize(text):
     return text
 
 
+# =========================
+# شناسه خبر
+# =========================
+
 def make_id(title, link):
-    value = normalize(title) + "|" + link
+
+    value = (
+        normalize(title)
+        + "|"
+        + link
+    )
 
     return hashlib.sha256(
         value.encode("utf-8")
     ).hexdigest()
 
 
+# =========================
+# خبرهای قبلی
+# =========================
+
 def load_posted():
-    if not os.path.exists(POSTED_FILE):
+
+    if not os.path.exists(
+        POSTED_FILE
+    ):
         return set()
 
     try:
-        with open(POSTED_FILE, "r", encoding="utf-8") as f:
+
+        with open(
+            POSTED_FILE,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
             return {
                 line.strip()
                 for line in f
@@ -136,51 +201,107 @@ def load_posted():
             }
 
     except Exception:
+
         return set()
 
 
 def save_posted(posted):
-    items = list(posted)[-MAX_POSTED:]
 
-    with open(POSTED_FILE, "w", encoding="utf-8") as f:
+    items = list(posted)[
+        -MAX_POSTED:
+    ]
+
+    with open(
+        POSTED_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
         for item in items:
-            f.write(item + "\n")
+            f.write(
+                item + "\n"
+            )
 
 
 # =========================
-# تشخیص مرتبط بودن خبر
+# تشخیص زبان
 # =========================
 
-def is_relevant(title, summary, source):
+def is_english(text):
+
+    if not text:
+        return False
+
+    english_chars = len(
+        re.findall(
+            r"[A-Za-z]",
+            text
+        )
+    )
+
+    persian_chars = len(
+        re.findall(
+            r"[\u0600-\u06FF]",
+            text
+        )
+    )
+
+    return (
+        english_chars > persian_chars
+    )
+
+
+# =========================
+# مرتبط بودن خبر
+# =========================
+
+def is_relevant(
+    title,
+    summary,
+    source
+):
 
     text = normalize(
         title + " " + summary
     )
 
-    # منابع ایرانی ما از ابتدا با جست‌وجوی Iran انتخاب شده‌اند.
-    # بنابراین اگر از این منابع خبر آمده باشد،
-    # آن را مرتبط با موضوع ایران در نظر می‌گیریم.
+    # منابع ایرانی
     if source in [
         "IRNA",
         "Tasnim",
-        "Entekhab"
+        "Entekhab",
+        "Mehr"
     ]:
         return True
 
-    # برای منابع عمومی مثل الجزیره،
-    # باید خود خبر ارتباط مشخصی با ایران داشته باشد.
-
-    # بررسی کلمات فارسی
+    # منابع خارجی
     for keyword in KEYWORDS:
+
         if normalize(keyword) in text:
             return True
 
-    # بررسی کلمات انگلیسی
-    english_text = clean_text(
+    # کلمات انگلیسی برای الجزیره
+    english_text = (
         title + " " + summary
     ).lower()
 
-    for keyword in ENGLISH_KEYWORDS:
+    english_keywords = [
+        "iran",
+        "iranian",
+        "tehran",
+        "israel",
+        "israeli",
+        "trump",
+        "sanctions",
+        "nuclear",
+        "missile",
+        "strait of hormuz",
+        "hormuz",
+        "iranian economy"
+    ]
+
+    for keyword in english_keywords:
+
         if keyword in english_text:
             return True
 
@@ -188,10 +309,14 @@ def is_relevant(title, summary, source):
 
 
 # =========================
-# امتیاز اهمیت خبر
+# امتیاز اهمیت
 # =========================
 
-def importance_score(title, summary, source):
+def importance_score(
+    title,
+    summary,
+    source
+):
 
     text = normalize(
         title + " " + summary
@@ -200,11 +325,15 @@ def importance_score(title, summary, source):
     score = 0
 
     # ارتباط مستقیم با ایران
-    if "ایران" in text or "تهران" in text:
+    if (
+        "ایران" in text
+        or "تهران" in text
+    ):
         score += 3
 
     # کلمات مهم
     for word in IMPORTANT_WORDS:
+
         if normalize(word) in text:
             score += 2
 
@@ -213,17 +342,21 @@ def importance_score(title, summary, source):
         "IRNA": 2,
         "Tasnim": 2,
         "Entekhab": 2,
+        "Mehr": 2,
         "Al Jazeera": 2,
     }
 
-    score += trusted.get(source, 0)
+    score += trusted.get(
+        source,
+        0
+    )
 
-    # چون منابع ایرانی با جست‌وجوی ایران انتخاب شده‌اند،
-    # یک امتیاز پایه برای ارتباط آن‌ها با ایران می‌دهیم.
+    # منابع ایرانی
     if source in [
         "IRNA",
         "Tasnim",
-        "Entekhab"
+        "Entekhab",
+        "Mehr"
     ]:
         score += 2
 
@@ -252,38 +385,135 @@ def similar(a, b):
 
 
 # =========================
-# ساخت پست تلگرام
+# تمیز کردن تیتر
 # =========================
 
-def make_post(title, summary):
+def clean_title(title):
+
+    title = clean_text(title)
+
+    # حذف بخش‌های تبلیغاتی رایج
+    title = re.sub(
+        r"\s*\|\s*.*$",
+        "",
+        title
+    )
+
+    title = re.sub(
+        r"\s*/\s*.*$",
+        "",
+        title
+    )
+
+    # حذف فاصله‌های اضافه
+    title = re.sub(
+        r"\s+",
+        " ",
+        title
+    ).strip()
+
+    # حداکثر طول تیتر
+    if len(title) > 150:
+
+        title = (
+            title[:147]
+            .rstrip()
+            + "..."
+        )
+
+    return title
+
+
+# =========================
+# ساخت خلاصه
+# =========================
+
+def make_summary(
+    title,
+    summary
+):
 
     title = clean_text(title)
     summary = clean_text(summary)
 
-    # کوتاه کردن تیتر
-    if len(title) > 180:
-        title = title[:177].rstrip() + "..."
+    if not summary:
+        return ""
+
+    # اگر خلاصه همان تیتر است
+    if similar(
+        title,
+        summary
+    ):
+        return ""
+
+    # حذف برخی عبارت‌های اضافی
+    summary = re.sub(
+        r"\s+",
+        " ",
+        summary
+    ).strip()
 
     # کوتاه کردن خلاصه
-    if len(summary) > 500:
-        summary = summary[:497].rstrip() + "..."
+    if len(summary) > 450:
 
-    # اگر خلاصه خیلی شبیه تیتر بود،
-    # فقط تیتر منتشر می‌شود.
-    if similar(title, summary):
-        return f"<b>{html.escape(title)}</b>"
+        summary = (
+            summary[:447]
+            .rsplit(" ", 1)[0]
+            + "..."
+        )
+
+    return summary
+
+
+# =========================
+# ساخت پست
+# =========================
+
+def make_post(
+    title,
+    summary
+):
+
+    title = clean_title(
+        title
+    )
+
+    summary = make_summary(
+        title,
+        summary
+    )
+
+    if not title:
+        return None
+
+    # اگر خبر انگلیسی است،
+    # فعلاً منتشر نمی‌کنیم تا متن انگلیسی
+    # وارد کانال فارسی نشود.
+    if is_english(title):
+
+        return None
+
+    if summary:
+
+        return (
+            f"<b>{html.escape(title)}</b>"
+            f"\n\n"
+            f"{html.escape(summary)}"
+        )
 
     return (
-        f"<b>{html.escape(title)}</b>\n\n"
-        f"{html.escape(summary)}"
+        f"<b>{html.escape(title)}</b>"
     )
 
 
 # =========================
-# دریافت خبر از RSS
+# دریافت فید
 # =========================
 
-def fetch_feed(source, url):
+def fetch_feed(
+    source,
+    url
+):
 
     try:
 
@@ -291,7 +521,8 @@ def fetch_feed(source, url):
             url,
             timeout=20,
             headers={
-                "User-Agent": "Mozilla/5.0 (NewsBot)"
+                "User-Agent":
+                "Mozilla/5.0 (NewsBot)"
             }
         )
 
@@ -306,7 +537,10 @@ def fetch_feed(source, url):
         for entry in feed.entries[:20]:
 
             title = clean_text(
-                entry.get("title", "")
+                entry.get(
+                    "title",
+                    ""
+                )
             )
 
             link = entry.get(
@@ -315,11 +549,20 @@ def fetch_feed(source, url):
             )
 
             summary = clean_text(
-                entry.get("summary", "")
-                or entry.get("description", "")
+                entry.get(
+                    "summary",
+                    ""
+                )
+                or entry.get(
+                    "description",
+                    ""
+                )
             )
 
-            if not title or not link:
+            if (
+                not title
+                or not link
+            ):
                 continue
 
             results.append({
@@ -337,40 +580,52 @@ def fetch_feed(source, url):
             f"[ERROR] {source}: {e}"
         )
 
-        # اگر یک منبع خراب باشد،
-        # بقیه منابع همچنان کار می‌کنند.
         return []
 
 
 # =========================
-# ارسال پیام به تلگرام
+# ارسال تلگرام
 # =========================
 
 def send_message(text):
 
-    url = f"{TELEGRAM_API}/sendMessage"
-
-    response = requests.post(
-        url,
-        json={
-            "chat_id": CHANNEL_ID,
-            "text": text,
-            "parse_mode": "HTML",
-            "disable_web_page_preview": True
-        },
-        timeout=20
+    url = (
+        f"{TELEGRAM_API}"
+        f"/sendMessage"
     )
 
-    if not response.ok:
+    try:
+
+        response = requests.post(
+            url,
+            json={
+                "chat_id": CHANNEL_ID,
+                "text": text,
+                "parse_mode": "HTML",
+                "disable_web_page_preview": True
+            },
+            timeout=20
+        )
+
+        if not response.ok:
+
+            print(
+                "Telegram error:",
+                response.text
+            )
+
+            return False
+
+        return True
+
+    except Exception as e:
 
         print(
-            "Telegram error:",
-            response.text
+            "Telegram exception:",
+            e
         )
 
         return False
-
-    return True
 
 
 # =========================
@@ -387,7 +642,10 @@ def main():
 
     all_news = []
 
-    # دریافت خبر از تمام منابع
+    # =========================
+    # دریافت خبرها
+    # =========================
+
     for source, url in FEEDS:
 
         news = fetch_feed(
@@ -396,10 +654,13 @@ def main():
         )
 
         print(
-            f"{source}: {len(news)} news"
+            f"{source}: "
+            f"{len(news)} news"
         )
 
-        all_news.extend(news)
+        all_news.extend(
+            news
+        )
 
     # =========================
     # حذف خبرهای تکراری
@@ -416,11 +677,9 @@ def main():
             item["link"]
         )
 
-        # قبلاً منتشر شده
         if news_id in posted:
             continue
 
-        # بررسی شباهت با خبرهای همین اجرا
         duplicate = False
 
         for old_title in titles:
@@ -429,6 +688,7 @@ def main():
                 item["title"],
                 old_title
             ):
+
                 duplicate = True
                 break
 
@@ -444,7 +704,8 @@ def main():
         )
 
     print(
-        f"New unique news: {len(unique_news)}"
+        f"New unique news: "
+        f"{len(unique_news)}"
     )
 
     # =========================
@@ -470,8 +731,8 @@ def main():
 
         item["score"] = score
 
-        # فقط خبرهای نسبتاً مهم
         if score >= 4:
+
             scored.append(
                 item
             )
@@ -486,7 +747,8 @@ def main():
     scored = scored[:3]
 
     print(
-        f"Selected news: {len(scored)}"
+        f"Selected news: "
+        f"{len(scored)}"
     )
 
     # =========================
@@ -499,6 +761,16 @@ def main():
             item["title"],
             item["summary"]
         )
+
+        # خبر انگلیسی فعلاً رد می‌شود
+        if not post:
+
+            print(
+                "Skipped non-Persian:",
+                item["title"]
+            )
+
+            continue
 
         print(
             "Publishing:",
@@ -541,7 +813,7 @@ def main():
 
 
 # =========================
-# شروع برنامه
+# شروع
 # =========================
 
 if __name__ == "__main__":
