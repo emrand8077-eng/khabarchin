@@ -759,6 +759,79 @@ def make_summary(
     return summary
 
 
+def rewrite_summary_with_ai(
+    title,
+    summary
+):
+
+    api_key = os.environ.get(
+        "OPENROUTER_API_KEY"
+    )
+
+    if not api_key or not summary:
+        return summary
+
+    prompt = f"""
+تو ویراستار یک کانال خبری فارسی هستی.
+
+تیتر:
+{title}
+
+متن خبر:
+{summary}
+
+متن را به یک خلاصه کوتاه، روان و خبری برای تلگرام تبدیل کن.
+
+قوانین:
+- معنی و اطلاعات اصلی خبر را تغییر نده.
+- هیچ اطلاعات جدیدی اضافه نکن.
+- نظر شخصی یا تحلیل سیاسی اضافه نکن.
+- لحن تبلیغاتی، احساسی و اغراق‌آمیز را حذف کن.
+- نام اشخاص، اعداد، تاریخ‌ها و مکان‌های مهم را حفظ کن.
+- متن را فارسی طبیعی و قابل فهم بنویس.
+- حداکثر 3 جمله.
+- فقط متن خلاصه را برگردان؛ هیچ توضیح اضافه‌ای نده.
+"""
+
+    try:
+
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "openrouter/free",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            },
+            timeout=30
+        )
+
+        if response.status_code != 200:
+            return summary
+
+        data = response.json()
+
+        rewritten = (
+            data["choices"][0]["message"]["content"]
+            .strip()
+        )
+
+        if not rewritten:
+            return summary
+
+        return rewritten
+
+    except Exception:
+        return summary
+
+
 # =========================
 # ساخت پست
 # =========================
