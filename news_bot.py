@@ -904,33 +904,34 @@ def rewrite_summary_with_ai(
     summary
 ):
 
-    api_key = os.environ.get(
-        "OPENROUTER_API_KEY"
-    )
-
-    if not api_key or not summary:
-        return summary
+    if not summary:
+        return ""
 
     prompt = f"""
-تو ویراستار یک کانال خبری فارسی هستی.
+تو یک ویراستار حرفه‌ای خبر برای یک کانال تلگرامی فارسی هستی.
 
-تیتر:
+عنوان خبر:
 {title}
 
-متن خبر:
+متن خلاصه:
 {summary}
 
-متن را به یک خلاصه کوتاه، روان و خبری برای تلگرام تبدیل کن.
+وظیفه:
+متن خلاصه را به یک خلاصه کوتاه، روان و طبیعی برای تلگرام تبدیل کن.
 
-قوانین:
-- معنی و اطلاعات اصلی خبر را تغییر نده.
+قوانین بسیار مهم:
+- فقط اطلاعات موجود در متن را بازنویسی کن.
 - هیچ اطلاعات جدیدی اضافه نکن.
-- نظر شخصی یا تحلیل سیاسی اضافه نکن.
-- لحن تبلیغاتی، احساسی و اغراق‌آمیز را حذف کن.
-- نام اشخاص، اعداد، تاریخ‌ها و مکان‌های مهم را حفظ کن.
-- متن را فارسی طبیعی و قابل فهم بنویس.
-- حداکثر 3 جمله.
-- فقط متن خلاصه را برگردان؛ هیچ توضیح اضافه‌ای نده.
+- معنی خبر را تغییر نده.
+- نام افراد، سازمان‌ها، مکان‌ها، عددها و تاریخ‌ها را حفظ کن.
+- عبارت‌های رسمی و کلیشه‌ای مثل «وی افزود»، «وی ادامه داد»، «به گزارش...» را تا حد امکان حذف کن.
+- لحن خبری، ساده و بی‌طرف باشد.
+- از لحن تبلیغاتی، احساسی یا سیاسی استفاده نکن.
+- خلاصه حداکثر 2 جمله باشد.
+- فقط خود خلاصه را بنویس.
+- هیچ توضیحی درباره کاری که انجام دادی ننویس.
+
+خلاصه بازنویسی‌شده:
 """
 
     try:
@@ -938,7 +939,7 @@ def rewrite_summary_with_ai(
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers={
-                "Authorization": f"Bearer {api_key}",
+                "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
                 "Content-Type": "application/json"
             },
             json={
@@ -948,28 +949,27 @@ def rewrite_summary_with_ai(
                         "role": "user",
                         "content": prompt
                     }
-                ]
+                ],
+                "temperature": 0.2,
+                "max_tokens": 180
             },
             timeout=30
         )
 
-        if response.status_code != 200:
-            return summary
-
         data = response.json()
 
-        rewritten = (
+        result = (
             data["choices"][0]["message"]["content"]
             .strip()
         )
 
-        if not rewritten:
-            return summary
-
-        return rewritten
+        if result:
+            return result
 
     except Exception:
-        return summary
+        pass
+
+    return summary
 
 
 def quality_check(
