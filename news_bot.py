@@ -575,19 +575,17 @@ def importance_score(
     # ==========================================
 
     trusted = {
-        "IRNA": 2,
+        "IRNA": 3,
         "Tasnim": 2,
-        "Entekhab": 2,
+        "Entekhab": 3,
         "Mehr": 2,
-        "Al Jazeera": 2
+        "Al Jazeera": 3
     }
 
     score += trusted.get(
         source,
         0
     )
-
-    return score
 
 
 # =========================
