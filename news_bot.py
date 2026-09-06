@@ -594,7 +594,7 @@ def clean_title(title):
     if not title:
         return ""
 
-    # حذف نام خبرگزاری یا عبارت‌های ابتدای تیتر
+    # حذف نام خبرگزاری یا عبارت‌های ابتدایی تیتر
     prefixes = [
         "تهران - ایرنا -",
         "تهران- ایرنا-",
@@ -613,6 +613,48 @@ def clean_title(title):
         if title.startswith(prefix):
             title = title[len(prefix):].strip()
 
+    # حذف عبارت‌های زرد یا غیرخبری از ابتدای تیتر
+    soft_prefixes = [
+        "پست عجیب ",
+        "واکنش عجیب ",
+        "تصمیم عجیب ",
+        "خبر عجیب ",
+        "ماجرای عجیب ",
+        "تصویر عجیب ",
+        "حرکت عجیب ",
+        "اظهارنظر عجیب ",
+        "حرف عجیب "
+    ]
+
+    for prefix in soft_prefixes:
+
+        if title.startswith(prefix):
+            title = title[len(prefix):].strip()
+
+    # حذف بعضی عبارت‌های کلیشه‌ای که ارزش خبری اضافه نمی‌کنند
+    soft_words = [
+        "عجیب و غریب",
+        "باورنکردنی",
+        "جنجالی",
+        "خبرساز",
+        "شوکه‌کننده",
+        "شوک‌آور"
+    ]
+
+    for word in soft_words:
+
+        title = title.replace(
+            word,
+            ""
+        )
+
+    # اگر حذف عبارت باعث فاصله اضافی شد
+    title = re.sub(
+        r"\s+",
+        " ",
+        title
+    ).strip()
+
     # اگر تیتر چند بخش با / یا | داشته باشد،
     # فقط بخش اصلی را نگه می‌داریم.
     if " / " in title:
@@ -621,15 +663,14 @@ def clean_title(title):
     if " | " in title:
         title = title.split(" | ")[0].strip()
 
-    # حذف فاصله‌های اضافی
+    # حذف فاصله قبل از علائم نگارشی
     title = re.sub(
-        r"\s+",
-        " ",
+        r"\s+([،؛:؟!])",
+        r"\1",
         title
     ).strip()
 
-    # اگر تیتر خیلی طولانی بود،
-    # ترجیحاً در یک جداکننده مناسب کوتاهش کن.
+    # اگر تیتر خیلی طولانی بود
     if len(title) > 110:
 
         shortened = title[:110]
