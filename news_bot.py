@@ -853,14 +853,15 @@ def make_post(
     if not title:
         return None
 
-    # اگر خبر انگلیسی است،
-    # فعلاً منتشر نمی‌کنیم تا متن انگلیسی
-    # وارد کانال فارسی نشود.
     if is_english(title):
-
         return None
 
     if summary:
+
+        summary = rewrite_summary_with_ai(
+            title,
+            summary
+        )
 
         return (
             f"<b>{html.escape(title)}</b>"
