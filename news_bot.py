@@ -1218,11 +1218,10 @@ def main():
 
     # =========================
     # حذف خبرهای تکراری
+    # با اولویت خبر مهم‌تر
     # =========================
 
     unique_news = []
-
-    titles = []
 
     for item in all_news:
 
@@ -1234,28 +1233,49 @@ def main():
         if news_id in posted:
             continue
 
-        duplicate = False
+        duplicate_index = None
 
-        for old_title in titles:
+        for index, old_item in enumerate(unique_news):
 
             if similar(
                 item["title"],
-                old_title
+                old_item["title"]
             ):
 
-                duplicate = True
+                duplicate_index = index
                 break
 
-        if duplicate:
-            continue
+        if duplicate_index is None:
 
-        titles.append(
-            item["title"]
-        )
+            unique_news.append(
+                item
+            )
 
-        unique_news.append(
-            item
-        )
+        else:
+
+            old_item = unique_news[
+                duplicate_index
+            ]
+
+            old_score = importance_score(
+                old_item["title"],
+                old_item["summary"],
+                old_item["source"]
+            )
+
+            new_score = importance_score(
+                item["title"],
+                item["summary"],
+                item["source"]
+            )
+
+            # اگر خبر جدید مهم‌تر بود،
+            # جای خبر قبلی را می‌گیرد.
+            if new_score > old_score:
+
+                unique_news[
+                    duplicate_index
+                ] = item
 
     print(
         f"New unique news: "
