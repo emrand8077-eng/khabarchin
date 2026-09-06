@@ -310,7 +310,7 @@ def main():
         item["score"] = score
 
         # فعلاً فقط خبرهای نسبتاً مهم
-        if score >= ۴:
+        if score >= 4:
             scored.append(item)
 
     # مهم‌ترین‌ها اول
