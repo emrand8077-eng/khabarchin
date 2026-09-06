@@ -392,20 +392,16 @@ def clean_title(title):
 
     title = clean_text(title)
 
-    # حذف بخش‌های تبلیغاتی رایج
-    title = re.sub(
-        r"\s*\|\s*.*$",
-        "",
-        title
-    )
+    # اگر تیتر چند بخش با / داشته باشد،
+    # فقط بخش اول را نگه می‌داریم.
+    if " / " in title:
+        title = title.split(" / ")[0].strip()
 
-    title = re.sub(
-        r"\s*/\s*.*$",
-        "",
-        title
-    )
+    # حذف بخش‌های بعد از |
+    if " | " in title:
+        title = title.split(" | ")[0].strip()
 
-    # حذف فاصله‌های اضافه
+    # حذف فاصله‌های اضافی
     title = re.sub(
         r"\s+",
         " ",
@@ -413,11 +409,10 @@ def clean_title(title):
     ).strip()
 
     # حداکثر طول تیتر
-    if len(title) > 150:
-
+    if len(title) > 130:
         title = (
-            title[:147]
-            .rstrip()
+            title[:127]
+            .rsplit(" ", 1)[0]
             + "..."
         )
 
