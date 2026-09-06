@@ -1018,11 +1018,23 @@ def make_post(
             summary
         )
 
+        if not quality_check(
+            title,
+            summary
+        ):
+            return None
+
         return (
             f"<b>{html.escape(title)}</b>"
             f"\n\n"
             f"{html.escape(summary)}"
         )
+
+    if not quality_check(
+        title,
+        ""
+    ):
+        return None
 
     return (
         f"<b>{html.escape(title)}</b>"
