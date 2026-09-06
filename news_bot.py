@@ -573,13 +573,23 @@ def similar(a, b):
     if not a or not b:
         return False
 
+    # اگر یکی تقریباً شامل دیگری باشد
+    shorter = min(len(a), len(b))
+    longer = max(len(a), len(b))
+
+    if shorter >= 35:
+        if shorter / longer >= 0.70:
+            if a in b or b in a:
+                return True
+
+    # مقایسه شباهت کلی
     ratio = SequenceMatcher(
         None,
         a,
         b
     ).ratio()
 
-    return ratio >= 0.78
+    return ratio >= 0.72
 
 
 # =========================
