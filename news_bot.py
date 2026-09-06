@@ -265,6 +265,65 @@ def is_relevant(
         title + " " + summary
     )
 
+    # موضوعات غیرمرتبط با کانال
+    excluded_keywords = [
+        "فوتبال",
+        "ورزش",
+        "بازیکن",
+        "بازیگر",
+        "بازیگران",
+        "سینما",
+        "فیلم",
+        "سریال",
+        "تلویزیون",
+        "موسیقی",
+        "خواننده",
+        "کنسرت",
+        "جشنواره فیلم",
+        "گیشه",
+        "تئاتر",
+        "پرسپولیس",
+        "استقلال",
+        "لیگ برتر",
+        "جام جهانی",
+        "مسابقه فوتبال",
+        "اپیزود"
+    ]
+
+    # اگر تیتر یا متن خبر کاملاً در حوزه‌های سرگرمی و ورزش باشد،
+    # خبر منتشر نشود.
+    for keyword in excluded_keywords:
+
+        if normalize(keyword) in text:
+
+            important_context = [
+                "تحریم",
+                "جنگ",
+                "حمله",
+                "موشک",
+                "هسته‌ای",
+                "مذاکره",
+                "برجام",
+                "تنگه هرمز",
+                "نفت",
+                "بنزین",
+                "دلار",
+                "تورم",
+                "اعتراض",
+                "انتخابات"
+            ]
+
+            has_important_context = False
+
+            for important in important_context:
+
+                if normalize(important) in text:
+                    has_important_context = True
+                    break
+
+            if not has_important_context:
+                return False
+
     # کلمات مرتبط با ایران و موضوعات موردنظر
     iran_keywords = [
         "ایران",
