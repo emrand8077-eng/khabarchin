@@ -426,6 +426,8 @@ def importance_score(
     source
 ):
 
+    title_text = normalize(title)
+
     text = normalize(
         title + " " + summary
     )
@@ -433,8 +435,11 @@ def importance_score(
     score = 0
 
     # ارتباط مستقیم با ایران
-    if "ایران" in text or "تهران" in text:
-        score += 3
+    if "ایران" in title_text or "تهران" in title_text:
+        score += 4
+
+    elif "ایران" in text or "تهران" in text:
+        score += 2
 
     # موضوعات بسیار مهم
     very_important = [
@@ -448,8 +453,6 @@ def importance_score(
         "برجام",
         "تنگه هرمز",
         "هرمز",
-        "آمریکا",
-        "اسرائیل",
         "نفت",
         "بنزین",
         "دلار",
@@ -462,8 +465,13 @@ def importance_score(
 
     for word in very_important:
 
-        if normalize(word) in text:
-            score += 3
+        word = normalize(word)
+
+        if word in title_text:
+            score += 4
+
+        elif word in text:
+            score += 2
 
     # موضوعات مهم سیاسی و اقتصادی
     important = [
@@ -490,7 +498,12 @@ def importance_score(
 
     for word in important:
 
-        if normalize(word) in text:
+        word = normalize(word)
+
+        if word in title_text:
+            score += 2
+
+        elif word in text:
             score += 1
 
     # اعتبار منبع
@@ -506,116 +519,6 @@ def importance_score(
         source,
         0
     )
-
-    # امتیاز پایه منابع ایرانی
-    if source in [
-        "IRNA",
-        "Tasnim",
-        "Entekhab",
-        "Mehr"
-    ]:
-        score += 2
-
-    return score
-
-    # =========================
-    # ارتباط مستقیم با ایران
-    # =========================
-
-    if "ایران" in text or "تهران" in text:
-        score += 3
-
-    # =========================
-    # موضوعات بسیار مهم
-    # =========================
-
-    very_important = [
-        "جنگ",
-        "حمله",
-        "موشک",
-        "تحریم",
-        "هسته‌ای",
-        "هسته ای",
-        "مذاکره",
-        "برجام",
-        "تنگه هرمز",
-        "هرمز",
-        "آمریکا",
-        "اسرائیل",
-        "نفت",
-        "بنزین",
-        "دلار",
-        "تورم",
-        "بانک مرکزی",
-        "اعتراض",
-        "زلزله",
-        "انفجار"
-    ]
-
-    for word in very_important:
-
-        if normalize(word) in text:
-            score += 3
-
-    # =========================
-    # موضوعات مهم سیاسی و اقتصادی
-    # =========================
-
-    important = [
-        "دولت",
-        "مجلس",
-        "رئیس جمهور",
-        "رئیس‌جمهور",
-        "خامنه‌ای",
-        "رهبر",
-        "سپاه",
-        "ارتش",
-        "وزیر",
-        "وزارت",
-        "اقتصاد",
-        "ارز",
-        "بودجه",
-        "بورس",
-        "انتخابات",
-        "قوه قضائیه",
-        "اعتصاب",
-        "قطعی برق",
-        "خاموشی"
-    ]
-
-    for word in important:
-
-        if normalize(word) in text:
-            score += 1
-
-    # =========================
-    # اعتبار منبع
-    # =========================
-
-    trusted = {
-        "IRNA": 2,
-        "Tasnim": 2,
-        "Entekhab": 2,
-        "Mehr": 2,
-        "Al Jazeera": 2,
-    }
-
-    score += trusted.get(
-        source,
-        0
-    )
-
-    # =========================
-    # امتیاز پایه منابع ایرانی
-    # =========================
-
-    if source in [
-        "IRNA",
-        "Tasnim",
-        "Entekhab",
-        "Mehr"
-    ]:
-        score += 2
 
     return score
 
