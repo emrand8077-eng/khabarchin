@@ -548,16 +548,17 @@ def importance_score(
 
     # ==========================================
     # ارتباط با ایران
+    # فقط برای تقویت امتیاز، نه تعیین اهمیت
     # ==========================================
 
     if "ایران" in title_text or "تهران" in title_text:
-        score += 4
-
-    elif "ایران" in text or "تهران" in text:
         score += 2
 
+    elif "ایران" in text or "تهران" in text:
+        score += 1
+
     # ==========================================
-    # خبرهای بسیار مهم
+    # موضوعات بسیار مهم
     # ==========================================
 
     very_important = [
@@ -577,7 +578,6 @@ def importance_score(
         "تورم",
         "بانک مرکزی",
         "اعتراض",
-        "زلزله",
         "انفجار",
         "آتش‌سوزی"
     ]
@@ -587,10 +587,10 @@ def importance_score(
         word = normalize(word)
 
         if word in title_text:
-            score += 4
+            score += 3
 
         elif word in text:
-            score += 2
+            score += 1
 
     # ==========================================
     # موضوعات مهم سیاسی و اقتصادی
@@ -603,20 +603,20 @@ def importance_score(
         "رئیس‌جمهور",
         "خامنه‌ای",
         "رهبر",
-        "سپاه",
         "ارتش",
         "اقتصاد",
         "ارز",
         "بودجه",
         "بورس",
-        "انتخابات",
-        "قوه قضائیه",
         "اعتصاب",
         "قطعی برق",
         "خاموشی",
         "معیشت",
         "تولید",
-        "تجارت"
+        "تجارت",
+        "سیاست خارجی",
+        "روابط خارجی",
+        "امنیت ملی"
     ]
 
     for word in important:
@@ -624,7 +624,7 @@ def importance_score(
         word = normalize(word)
 
         if word in title_text:
-            score += 2
+            score += 1
 
         elif word in text:
             score += 1
@@ -651,23 +651,25 @@ def importance_score(
         word = normalize(word)
 
         if word in title_text:
-            score += 2
+            score += 1
 
     # ==========================================
     # اعتبار منبع
+    # امتیاز بسیار کم تا منبع به‌تنهایی
+    # باعث انتشار خبر نشود
     # ==========================================
 
     trusted = {
-    "IRNA": 3,
-    "Tasnim": 3,
-    "Entekhab": 3,
-    "Mehr": 2,
-    "Al Jazeera": 3
+        "IRNA": 1,
+        "Tasnim": 1,
+        "Entekhab": 1,
+        "Mehr": 1,
+        "Al Jazeera": 1
     }
 
     score += trusted.get(
-             source,
-                  0
+        source,
+        0
     )
 
     return score
