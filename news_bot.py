@@ -1483,16 +1483,16 @@ def main():
     for item in unique_news:
 
         if not is_relevant(
-         item["title"],
-         item["summary"],
-         item["source"]
-                         ):
-        if item["source"] == "Al Jazeera":
-           print(
-            "Al Jazeera rejected:",
-            item["title"]
-           )
-        continue
+            item["title"],
+            item["summary"],
+            item["source"]
+        ):
+            if item["source"] == "Al Jazeera":
+                print(
+                    "Al Jazeera rejected:",
+                    item["title"]
+                )
+            continue
 
         score = importance_score(
             item["title"],
@@ -1503,10 +1503,7 @@ def main():
         item["score"] = score
 
         if score >= 4:
-
-            scored.append(
-                item
-            )
+            scored.append(item)
 
     # مهم‌ترین خبرها اول
     scored.sort(
