@@ -1306,9 +1306,6 @@ def main():
         reverse=True
     )
 
-    # حداکثر 3 خبر در هر اجرا
-    scored = scored[:3]
-
     print(
         f"Selected news: "
         f"{len(scored)}"
