@@ -1095,6 +1095,8 @@ def quality_check(
 
 def make_post(title, summary):
 
+    original_title = title
+
     title = clean_title(title)
 
     summary = make_summary(title, summary)
@@ -1102,17 +1104,34 @@ def make_post(title, summary):
     if not title:
         return None
 
-    if is_english(title):
-        return None
+    # خبر خارجی انگلیسی
+    if is_english(original_title):
 
-    if summary:
+        translated = translate_foreign_news_with_ai(
+            original_title,
+            summary
+        )
 
-        if len(summary) > 180:
+        if not translated:
+            return None
+
+        title = translated["title"]
+        summary = translated["summary"]
+
+    # خبرهای فارسی
+    else:
+
+        if summary and len(summary) > 180:
 
             summary = rewrite_summary_with_ai(
                 title,
                 summary
             )
+
+    if not title:
+        return None
+
+    if summary:
 
         if not quality_check(
             title,
