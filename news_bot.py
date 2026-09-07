@@ -477,7 +477,6 @@ def is_relevant(
         "تورم",
         "اعتراض",
         "انفجار",
-        "زلزله"
     ]
 
     for keyword in very_important:
