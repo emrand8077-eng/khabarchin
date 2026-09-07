@@ -1055,6 +1055,105 @@ def rewrite_summary_with_ai(
     return summary
 
 
+def translate_foreign_news_with_ai(
+    title,
+    summary
+):
+
+    prompt = f"""
+تو یک مترجم و ویراستار حرفه‌ای خبر برای یک کانال تلگرامی فارسی هستی.
+
+عنوان انگلیسی:
+{title}
+
+خلاصه انگلیسی:
+{summary}
+
+وظیفه:
+این خبر را به فارسی روان و خبری ترجمه کن.
+
+قوانین:
+- معنی خبر را دقیق حفظ کن.
+- هیچ اطلاعات جدیدی اضافه نکن.
+- نام افراد، سازمان‌ها، مکان‌ها، عددها و تاریخ‌ها را حفظ کن.
+- لحن خبری، ساده و بی‌طرف باشد.
+- از لحن تبلیغاتی یا احساسی استفاده نکن.
+- عنوان فارسی کوتاه و طبیعی باشد.
+- خلاصه حداکثر 2 جمله باشد.
+- فقط در قالب زیر پاسخ بده:
+
+TITLE:
+عنوان فارسی
+
+SUMMARY:
+خلاصه فارسی
+"""
+
+    try:
+
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization":
+                    f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                "Content-Type":
+                    "application/json"
+            },
+            json={
+                "model": "openrouter/free",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "temperature": 0.2,
+                "max_tokens": 250
+            },
+            timeout=30
+        )
+
+        if response.status_code != 200:
+            return None
+
+        data = response.json()
+
+        result = (
+            data["choices"][0]["message"]["content"]
+            .strip()
+        )
+
+        if "TITLE:" not in result:
+            return None
+
+        if "SUMMARY:" not in result:
+            return None
+
+        title_part = result.split(
+            "TITLE:",
+            1
+        )[1]
+
+        title_part, summary_part = title_part.split(
+            "SUMMARY:",
+            1
+        )
+
+        translated_title = title_part.strip()
+        translated_summary = summary_part.strip()
+
+        if not translated_title:
+            return None
+
+        return {
+            "title": translated_title,
+            "summary": translated_summary
+        }
+
+    except Exception:
+        return None
+
+
 def quality_check(
     title,
     summary
