@@ -92,7 +92,6 @@ FEEDS = [
     ("IRNA", "https://www.irna.ir/rss"),
     ("Mehr", "https://en.mehrnews.com/rss"),
     ("Al Jazeera", "https://www.aljazeera.com/xml/rss/all.xml"),
-    ("Reuters", "https://feeds.reuters.com/reuters/topNews"),
 ]
 
 # =========================
