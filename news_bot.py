@@ -1511,6 +1511,8 @@ def main():
         reverse=True
     )
 
+    scored = scored[:3]
+
     print(
         f"Selected news: "
         f"{len(scored)}"
