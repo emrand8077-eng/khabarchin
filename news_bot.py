@@ -1380,6 +1380,15 @@ def make_post(
         title,
         summary
     )
+    print(
+        "Clean title:",
+        title
+    )
+
+    print(
+        "Clean summary:",
+        summary
+    )
 
     if summary and len(title) > 70:
 
