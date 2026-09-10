@@ -2002,17 +2002,14 @@ def main():
 
         if previous_news:
             print(
-                "Previous similar news:",
-                previous_news["title"]
-            )
-            print(
-                "Current news:",
+                "Rejected old news:",
                 item["title"]
             )
             print(
-                "Current source:",
-                item["source"]
+                "Previous similar news:",
+                previous_news["title"]
             )
+            continue
 
         if not is_relevant(
             item["title"],
