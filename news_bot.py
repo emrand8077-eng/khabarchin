@@ -1469,6 +1469,57 @@ def send_message(text):
 # اجرای اصلی
 # =========================
 
+def save_news_history(item):
+
+    history_file = "news_history.json"
+
+    try:
+
+        if os.path.exists(history_file):
+
+            with open(
+                history_file,
+                "r",
+                encoding="utf-8"
+            ) as f:
+
+                history = json.load(f)
+
+        else:
+
+            history = []
+
+        history.append({
+            "title": item["title"],
+            "summary": item["summary"],
+            "source": item["source"],
+            "link": item["link"],
+            "published_at": datetime.now().isoformat()
+        })
+
+        # فقط 100 خبر اخیر نگه داشته شود
+        history = history[-100:]
+
+        with open(
+            history_file,
+            "w",
+            encoding="utf-8"
+        ) as f:
+
+            json.dump(
+                history,
+                f,
+                ensure_ascii=False,
+                indent=2
+            )
+
+    except Exception as e:
+
+        print(
+            "Could not save news history:",
+            e
+        )
+
 def main():
 
     print(
