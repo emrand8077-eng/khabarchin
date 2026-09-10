@@ -966,6 +966,16 @@ def make_summary(
     title = clean_text(title)
     summary = clean_text(summary)
 
+    print(
+        "make_summary input:",
+        summary[:200]
+    )
+
+    print(
+        "make_summary input length:",
+        len(summary)
+    )
+
     if not summary:
         return ""
 
