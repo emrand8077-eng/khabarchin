@@ -1577,6 +1577,16 @@ def fetch_article_text(link):
             "html.parser"
         )
 
+        print(
+            "Article page status:",
+            response.status_code
+        )
+
+        print(
+            "Article page size:",
+            len(response.text)
+        )
+
         # حذف بخش‌های غیرمتنی
         for tag in soup([
             "script",
