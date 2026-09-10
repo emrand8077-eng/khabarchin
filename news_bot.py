@@ -1466,7 +1466,15 @@ def make_post(
     # خبرهای فارسی
     else:
 
-        if summary and len(summary) > 180:
+    if summary:
+
+        if (
+            len(summary) > 180
+            or is_summary_incomplete(
+                title,
+                summary
+            )
+        ):
 
             summary = rewrite_summary_with_ai(
                 title,
