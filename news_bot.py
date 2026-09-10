@@ -1711,6 +1711,14 @@ def main():
         )
 
         item["score"] = score
+        print(
+            "Candidate:",
+            item["title"],
+            "| Score:",
+             score,
+            "| Source:",
+            item["source"]
+        )
 
         if score >= 4:
             scored.append(item)
