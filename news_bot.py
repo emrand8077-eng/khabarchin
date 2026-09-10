@@ -1427,6 +1427,7 @@ def make_post(
         title,
         summary
     )
+
     print(
         "Clean title:",
         title
@@ -1439,17 +1440,18 @@ def make_post(
 
     if summary and len(title) > 70:
 
-       title = rewrite_title_with_ai(
-           title,
-           summary
-    )
+        title = rewrite_title_with_ai(
+            title,
+            summary
+        )
 
-       title = clean_title(title)
+        title = clean_title(
+            title
+        )
 
     if not title:
         return None
 
-    # خبر خارجی انگلیسی
     if is_english(original_title):
 
         translated = translate_foreign_news_with_ai(
@@ -1463,23 +1465,22 @@ def make_post(
         title = translated["title"]
         summary = translated["summary"]
 
-    # خبرهای فارسی
     else:
 
-    if summary:
+        if summary:
 
-        if (
-            len(summary) > 180
-            or is_summary_incomplete(
-                title,
-                summary
-            )
-        ):
+            if (
+                len(summary) > 180
+                or is_summary_incomplete(
+                    title,
+                    summary
+                )
+            ):
 
-            summary = rewrite_summary_with_ai(
-                title,
-                summary
-            )
+                summary = rewrite_summary_with_ai(
+                    title,
+                    summary
+                )
 
     if not title:
         return None
@@ -1500,7 +1501,10 @@ def make_post(
             f"@MeRan_ir | {html.escape(source)}"
         )
 
-    if not quality_check(title, ""):
+    if not quality_check(
+        title,
+        ""
+    ):
         return None
 
     return (
