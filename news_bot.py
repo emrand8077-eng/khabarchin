@@ -1389,47 +1389,6 @@ def quality_check(
     if len(summary) < 35:
         return False
 
-    # خلاصه نباید با علامت نگارشیِ نشان‌دهنده ادامه متن تمام شود
-    incomplete_punctuation = [
-        "،",
-        ":",
-        "؛",
-        "-",
-        "–",
-        "—"
-    ]
-
-    for mark in incomplete_punctuation:
-
-        if summary.endswith(mark):
-            return False
-
-    # خلاصه نباید با عبارت‌های ناتمام تمام شود
-    incomplete_endings = [
-        "برای",
-        "در",
-        "به",
-        "از",
-        "که",
-        "با",
-        "و",
-        "اما",
-        "اگر",
-        "تا",
-        "مشغول",
-        "ادامه",
-        "درباره",
-        "همچنین",
-        "از جمله",
-        "به ویژه",
-        "به‌ویژه"
-    ]
-
-    for ending in incomplete_endings:
-
-        if summary.endswith(ending):
-            return False
-
     # تیتر نباید فقط چند کلمه عمومی باشد
     weak_titles = [
         "آخرین خبر",
