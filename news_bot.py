@@ -1194,13 +1194,20 @@ def quality_check(
 # ساخت پست
 # =========================
 
-def make_post(title, summary):
+def make_post(
+    title,
+    summary,
+    source
+):
 
     original_title = title
 
     title = clean_title(title)
 
-    summary = make_summary(title, summary)
+    summary = make_summary(
+        title,
+        summary
+    )
 
     if not title:
         return None
@@ -1244,12 +1251,18 @@ def make_post(title, summary):
             f"<b>{html.escape(title)}</b>"
             f"\n\n"
             f"{html.escape(summary)}"
+            f"\n\n"
+            f"@MeRan_ir | {html.escape(source)}"
         )
 
     if not quality_check(title, ""):
         return None
 
-    return f"<b>{html.escape(title)}</b>"
+    return (
+        f"<b>{html.escape(title)}</b>"
+        f"\n\n"
+        f"@MeRan_ir | {html.escape(source)}"
+    )
 
 
 # =========================
