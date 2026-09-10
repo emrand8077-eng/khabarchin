@@ -971,7 +971,11 @@ def make_summary(
 
     # اگر خلاصه تقریباً همان تیتر است، دوباره تکرارش نکن
     if similar(title, summary):
-        return ""
+
+       if len(summary) < 120:
+          return summary
+
+       return ""
 
     # یکدست کردن فاصله‌ها
     summary = re.sub(
