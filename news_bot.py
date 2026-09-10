@@ -1685,6 +1685,12 @@ def main():
             history
         )
 
+        if previous_news:
+            print(
+                "Previous similar news:",
+                previous_news["title"]
+            )
+
         if not is_relevant(
             item["title"],
             item["summary"],
