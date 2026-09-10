@@ -1522,7 +1522,31 @@ def fetch_feed(
                     ""
                 )
             )
-            
+
+            # بعضی RSSها متن کامل خبر را داخل content قرار می‌دهند
+            if len(summary) < 180:
+
+                contents = entry.get(
+                    "content",
+                    []
+                )
+
+                if contents:
+
+                    content_text = clean_text(
+                        " ".join(
+                            item.get(
+                                "value",
+                                ""
+                            )
+                            for item in contents
+                        )
+                    )
+
+                    if len(content_text) > len(summary):
+
+                        summary = content_text
+
             print(
                 "Raw summary:",
                 summary[:200]
