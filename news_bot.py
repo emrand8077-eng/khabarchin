@@ -1511,6 +1511,16 @@ def fetch_feed(
                     ""
                 )
             )
+            
+            print(
+                "Raw summary:",
+                summary[:200]
+            )
+
+            print(
+                "Summary length:",
+                len(summary)
+            )
 
             if (
                 not title
