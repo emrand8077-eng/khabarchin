@@ -1695,12 +1695,12 @@ def main():
             item["summary"],
             item["source"]
         ):
-            ...
-            if item["source"] == "Al Jazeera":
-                print(
-                    "Al Jazeera rejected:",
-                    item["title"]
-                )
+            print(
+                "Rejected by relevance:",
+                item["title"],
+                "| Source:",
+                item["source"]
+            )
             continue
 
         score = importance_score(
