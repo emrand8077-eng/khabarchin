@@ -4,6 +4,7 @@ import html
 import hashlib
 import feedparser
 import requests
+from bs4 import BeautifulSoup
 import json
 from datetime import datetime
 from difflib import SequenceMatcher
