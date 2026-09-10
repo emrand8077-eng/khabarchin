@@ -293,7 +293,7 @@ def is_relevant(
     ]
 
     # ==========================================
-    # نشانه‌های مشخص ایران
+    # زمینه ایران
     # ==========================================
 
     iran_context = [
@@ -309,7 +309,13 @@ def is_relevant(
         "رئیس‌جمهور ایران",
         "سپاه پاسداران",
         "نیروهای مسلح ایران",
-        "ارتش ایران"
+        "ارتش ایران",
+        "پزشکیان",
+        "قالیباف",
+        "ظریف",
+        "عراقچی",
+        "خامنه‌ای",
+        "رهبر ایران"
     ]
 
     # ==========================================
@@ -328,11 +334,14 @@ def is_relevant(
         "رئیس بانک مرکزی",
         "شورای عالی امنیت ملی",
         "سپاه پاسداران",
-        "قوه قضائیه"
+        "قوه قضائیه",
+        "دولت",
+        "مجلس",
+        "بانک مرکزی"
     ]
 
     # ==========================================
-    # مواردی که ذاتاً نامرتبط‌اند
+    # موضوعات سرگرمی / ورزشی / فرهنگی
     # ==========================================
 
     excluded_keywords = [
@@ -373,8 +382,7 @@ def is_relevant(
     ]
 
     # ==========================================
-    # خبرهای کاملاً سرگرمی/ورزشی/فرهنگی
-    # مگر اینکه موضوع مهم سیاسی یا اقتصادی داشته باشند
+    # حذف خبرهای سرگرمی و ورزشی
     # ==========================================
 
     for keyword in excluded_keywords:
@@ -393,10 +401,14 @@ def is_relevant(
                 return False
 
     # ==========================================
-    # منابع خارجی
+    # خبرهای خارجی
+    # فقط اگر مستقیماً با ایران مرتبط باشند
     # ==========================================
 
-    if source == "Al Jazeera":
+    if source in [
+        "Al Jazeera",
+        "Mehr"
+    ]:
 
         english_text = (
             title + " " + summary
@@ -431,10 +443,36 @@ def is_relevant(
             if keyword in english_text:
                 return True
 
+        # اگر خبر خارجی درباره موضوعات منطقه‌ای
+        # بسیار مرتبط با ایران باشد
+        regional_topics = [
+            "yemen",
+            "houthis",
+            "israel",
+            "israeli",
+            "lebanon",
+            "gaza",
+            "middle east",
+            "red sea",
+            "saudi arabia",
+            "iraq",
+            "syria",
+            "hormuz"
+        ]
+
+        for keyword in regional_topics:
+
+            if keyword in english_text:
+
+                for iran_word in iran_related_english:
+
+                    if iran_word in english_text:
+                        return True
+
         return False
 
     # ==========================================
-    # منابع ایرانی
+    # تشخیص زمینه ایران
     # ==========================================
 
     has_iran_context = False
@@ -445,6 +483,10 @@ def is_relevant(
             has_iran_context = True
             break
 
+    # ==========================================
+    # تشخیص موضوع اصلی
+    # ==========================================
+
     has_core_topic = False
 
     for keyword in core_topics:
@@ -454,44 +496,14 @@ def is_relevant(
             break
 
     # ==========================================
-    # خبرهای مرتبط مستقیم با ایران
+    # خبر مستقیم درباره ایران
     # ==========================================
 
     if has_iran_context and has_core_topic:
         return True
 
     # ==========================================
-    # اخبار بسیار مهم سیاسی/امنیتی
-    # ==========================================
-
-    very_important = [
-        "جنگ",
-        "حمله",
-        "موشک",
-        "تحریم",
-        "هسته‌ای",
-        "هسته ای",
-        "مذاکره",
-        "برجام",
-        "تنگه هرمز",
-        "نفت",
-        "بنزین",
-        "دلار",
-        "تورم",
-        "اعتراض",
-        "انفجار",
-    ]
-
-    for keyword in very_important:
-
-        if normalize(keyword) in text:
-
-            if has_iran_context:
-                return True
-
-    # ==========================================
-    # مسئولان و نهادهای مهم
-    # فقط وقتی موضوع واقعاً سیاسی باشد
+    # خبرهای سیاسی درباره ایران
     # ==========================================
 
     has_important_person = False
@@ -512,7 +524,10 @@ def is_relevant(
         "سیاست خارجی",
         "امنیت",
         "انتخابات",
-        "بودجه"
+        "بودجه",
+        "تصمیم",
+        "مصوبه",
+        "دیپلماسی"
     ]
 
     has_political_topic = False
@@ -523,10 +538,41 @@ def is_relevant(
             has_political_topic = True
             break
 
-    if has_important_person and has_political_topic:
+    if has_iran_context and has_important_person:
+        return True
 
-        if has_iran_context:
-            return True
+    if has_iran_context and has_political_topic:
+        return True
+
+    # ==========================================
+    # موضوعات بسیار مهم مرتبط با ایران
+    # ==========================================
+
+    very_important = [
+        "جنگ",
+        "حمله",
+        "موشک",
+        "تحریم",
+        "هسته‌ای",
+        "هسته ای",
+        "مذاکره",
+        "برجام",
+        "تنگه هرمز",
+        "هرمز",
+        "نفت",
+        "بنزین",
+        "دلار",
+        "تورم",
+        "اعتراض",
+        "انفجار"
+    ]
+
+    for keyword in very_important:
+
+        if normalize(keyword) in text:
+
+            if has_iran_context:
+                return True
 
     return False
 
