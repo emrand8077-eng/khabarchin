@@ -1391,6 +1391,32 @@ def quality_check(
     if summary and len(summary) < 35:
         return False
 
+    # خلاصه نباید با عبارت‌های ناتمام تمام شود
+    incomplete_endings = [
+        "برای",
+        "در",
+        "به",
+        "از",
+        "که",
+        "با",
+        "و",
+        "اما",
+        "اگر",
+        "تا",
+        "مشغول",
+        "ادامه",
+        "درباره"
+    ]
+
+    for ending in incomplete_endings:
+
+        if summary.endswith(ending):
+            return False
+
+    # خبر بدون خلاصه منتشر نشود
+    if not summary:
+        return False
+
     # تیتر نباید فقط چند کلمه عمومی باشد
     weak_titles = [
         "آخرین خبر",
