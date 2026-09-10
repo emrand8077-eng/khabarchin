@@ -15,16 +15,22 @@ permissions:
 jobs:
   post-news:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install feedparser requests
+
+      - run: pip install feedparser requests beautifulsoup4
+
       - run: python news_bot.py
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
       - name: save posted
         run: |
           git config user.name "news-bot"
