@@ -1438,7 +1438,7 @@ def make_post(
         summary
     )
 
-    if summary and len(original_title) > 70:
+    if summary:
 
         title = rewrite_title_with_ai(
             original_title,
