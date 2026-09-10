@@ -1083,14 +1083,41 @@ def is_summary_incomplete(
     if not summary:
         return True
 
-    # خلاصه‌های خیلی کوتاه معمولاً اطلاعات کافی ندارند
-    if len(summary) < 120:
-        return True
+    # خلاصه خیلی کوتاه فقط وقتی ناقص محسوب می‌شود
+    # که جمله هم ناتمام به نظر برسد.
+    if len(summary) < 80:
+
+        incomplete_endings = [
+            "،",
+            ":",
+            "؛",
+            "-",
+            "–",
+            "—",
+            "برای",
+            "در",
+            "به",
+            "از",
+            "که",
+            "با",
+            "و",
+            "اما",
+            "اگر",
+            "تا"
+        ]
+
+        for ending in incomplete_endings:
+
+            if summary.endswith(ending):
+                return True
 
     # اگر خلاصه تقریباً همان تیتر باشد،
-    # احتمالاً اطلاعات کافی در آن نیست
+    # فقط در صورتی ناقص در نظر گرفته شود
+    # که خیلی کوتاه باشد.
     if similar(title, summary):
-        return True
+
+        if len(summary) < 80:
+            return True
 
     return False
 
