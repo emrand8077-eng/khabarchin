@@ -1943,6 +1943,20 @@ def main():
 
     for item in scored:
 
+        article_text = fetch_article_text(
+            item["link"]
+        )
+
+        print(
+            "Article text length:",
+            len(article_text)
+        )
+
+        print(
+            "Article text preview:",
+            article_text[:500]
+        )
+
         post = make_post(
             item["title"],
             item["summary"],
