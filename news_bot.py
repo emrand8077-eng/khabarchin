@@ -1674,15 +1674,23 @@ def main():
     # امتیازدهی
     # =========================
 
+    history = load_news_history()
+
     scored = []
 
     for item in unique_news:
+
+        previous_news = find_previous_similar_news(
+            item["title"],
+            history
+        )
 
         if not is_relevant(
             item["title"],
             item["summary"],
             item["source"]
         ):
+            ...
             if item["source"] == "Al Jazeera":
                 print(
                     "Al Jazeera rejected:",
