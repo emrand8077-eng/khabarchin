@@ -1600,14 +1600,16 @@ def fetch_article_text(link):
 
         paragraphs = []
 
-        for p in soup.find_all("p"):
+        for tag in soup.find_all(
+            ["p", "div", "article"]
+        ):
 
             text = clean_text(
-                p.get_text(" ", strip=True)
+                tag.get_text(" ", strip=True)
             )
 
-            if len(text) >= 30:
-                paragraphs.append(text)
+            if len(text) >= 50:
+               paragraphs.append(text)
 
         article_text = "\n".join(
             paragraphs
