@@ -1553,6 +1553,27 @@ def load_news_history():
 
         return []
 
+def find_previous_similar_news(
+    title,
+    history
+):
+
+    for old_news in history:
+
+        old_title = old_news.get(
+            "title",
+            ""
+        )
+
+        if similar(
+            title,
+            old_title
+        ):
+
+            return old_news
+
+    return None
+
 def main():
 
     print(
