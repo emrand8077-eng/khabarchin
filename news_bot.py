@@ -1081,6 +1081,29 @@ def make_summary(
     return summary
 
 
+def is_summary_incomplete(
+    title,
+    summary
+):
+
+    title = clean_text(title)
+    summary = clean_text(summary)
+
+    if not summary:
+        return True
+
+    # خلاصه‌های خیلی کوتاه معمولاً اطلاعات کافی ندارند
+    if len(summary) < 120:
+        return True
+
+    # اگر خلاصه تقریباً همان تیتر باشد،
+    # احتمالاً اطلاعات کافی در آن نیست
+    if similar(title, summary):
+        return True
+
+    return False
+
+
 def rewrite_summary_with_ai(
     title,
     summary
