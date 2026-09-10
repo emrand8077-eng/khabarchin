@@ -1689,6 +1689,14 @@ def main():
                 "Previous similar news:",
                 previous_news["title"]
             )
+            print(
+                "Current news:",
+                item["title"]
+            )
+            print(
+                "Current source:",
+                item["source"]
+            )
 
         if not is_relevant(
             item["title"],
