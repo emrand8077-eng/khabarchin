@@ -1572,8 +1572,10 @@ def fetch_article_text(link):
 
         response.raise_for_status()
 
+        response.encoding = response.apparent_encoding
+
         soup = BeautifulSoup(
-            response.text,
+            response.content,
             "html.parser"
         )
 
