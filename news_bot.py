@@ -1144,6 +1144,91 @@ def rewrite_summary_with_ai(
     return summary
 
 
+def rewrite_title_with_ai(
+    title,
+    summary
+):
+
+    prompt = f"""
+تو یک دبیر حرفه‌ای خبر برای یک کانال تلگرامی فارسی هستی.
+
+عنوان خام:
+{title}
+
+خلاصه خبر:
+{summary}
+
+وظیفه:
+عنوان خبر را به یک تیتر فارسی کوتاه، کامل، طبیعی و خبری تبدیل کن.
+
+قوانین بسیار مهم:
+- فقط بر اساس اطلاعات موجود در عنوان و خلاصه بنویس.
+- هیچ اطلاعات جدیدی اضافه نکن.
+- معنی خبر را تغییر نده.
+- نام افراد، کشورها، سازمان‌ها، مکان‌ها و اعداد را حفظ کن.
+- اگر عنوان خام ناقص یا بریده شده، آن را با استفاده از اطلاعات موجود در خلاصه کامل کن.
+- نام خبرگزاری یا منبع را از ابتدای تیتر حذف کن.
+- تیتر حداکثر 90 کاراکتر باشد.
+- از لحن تبلیغاتی، احساسی، زرد یا طنز استفاده نکن.
+- فقط خود تیتر را بنویس و هیچ توضیح دیگری نده.
+
+تیتر نهایی:
+"""
+
+    try:
+
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization":
+                    f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                "Content-Type":
+                    "application/json"
+            },
+            json={
+                "model": "openrouter/free",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "temperature": 0.2,
+                "max_tokens": 100
+            },
+            timeout=30
+        )
+
+        if response.status_code != 200:
+            return title
+
+        data = response.json()
+
+        result = (
+            data["choices"][0]["message"]["content"]
+            .strip()
+        )
+
+        if not result:
+            return title
+
+        result = result.replace(
+            "تیتر نهایی:",
+            ""
+        ).strip()
+
+        if len(result) > 100:
+            result = result[:100].rsplit(
+                " ",
+                1
+            )[0].strip()
+
+        return result
+
+    except Exception:
+        return title
+
+
 def translate_foreign_news_with_ai(
     title,
     summary
