@@ -1703,6 +1703,7 @@ def main():
             posted.add(
                 news_id
             )
+            save_news_history(item)
 
             print(
                 "Published successfully."
