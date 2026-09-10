@@ -889,11 +889,11 @@ def clean_title(title):
         )
 
     # جدا کردن بخش‌های مختلف تیتر
-    if " / " in title:
-        title = title.split(" / ")[0].strip()
+    if "/" in title:
+       title = title.split("/", 1)[0].strip()
 
-    if " | " in title:
-        title = title.split(" | ")[0].strip()
+    if "|" in title:
+       title = title.split("|", 1)[0].strip()
 
     # حذف فاصله‌های اضافی
     title = re.sub(
