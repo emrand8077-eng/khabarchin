@@ -1438,16 +1438,16 @@ def make_post(
         summary
     )
 
-    if summary and len(title) > 70:
+    if summary and len(original_title) > 70:
 
-        title = rewrite_title_with_ai(
-            title,
-            summary
-        )
+    title = rewrite_title_with_ai(
+        original_title,
+        summary
+    )
 
-        title = clean_title(
-            title
-        )
+    title = clean_title(
+        title
+    )
 
     if not title:
         return None
