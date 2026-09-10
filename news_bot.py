@@ -711,7 +711,10 @@ def similar(a, b):
         "در گفت‌وگو",
         "در گفتگو",
         "آخرین",
-        "جدیدترین"
+        "جدیدترین",
+        "ایران",
+        "ایرانی",
+        "تهران"
     ]
 
     for word in common_words:
@@ -745,7 +748,77 @@ def similar(a, b):
         b
     ).ratio()
 
-    return ratio >= 0.68
+    if ratio >= 0.68:
+        return True
+
+    # استخراج کلمات معنادار
+    stop_words = {
+        "به",
+        "از",
+        "در",
+        "با",
+        "برای",
+        "که",
+        "را",
+        "و",
+        "یا",
+        "این",
+        "آن",
+        "یک",
+        "بر",
+        "تا",
+        "کرد",
+        "کرده",
+        "شد",
+        "شده",
+        "است",
+        "هست",
+        "خواهد",
+        "می‌شود",
+        "می‌شود",
+        "درباره",
+        "پس",
+        "هم",
+        "نیز"
+    }
+
+    words_a = {
+        word
+        for word in a.split()
+        if len(word) >= 4
+        and word not in stop_words
+    }
+
+    words_b = {
+        word
+        for word in b.split()
+        if len(word) >= 4
+        and word not in stop_words
+    }
+
+    if not words_a or not words_b:
+        return False
+
+    common = words_a & words_b
+
+    # اگر چند کلمه کلیدی مهم مشترک باشند
+    smaller_set = min(
+        len(words_a),
+        len(words_b)
+    )
+
+    if smaller_set >= 4:
+
+        if len(common) >= 3:
+
+            common_ratio = (
+                len(common) / smaller_set
+            )
+
+            if common_ratio >= 0.60:
+                return True
+
+    return False
 
 
 # =========================
