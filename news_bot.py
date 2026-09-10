@@ -1577,6 +1577,11 @@ def fetch_article_text(link):
             "html.parser",
             from_encoding="utf-8"
         )
+        
+        print(
+            "HTML preview:",
+            response.text[:1500]
+        )
 
         print(
             "Article page status:",
