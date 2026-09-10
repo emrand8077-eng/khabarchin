@@ -1015,115 +1015,63 @@ def make_summary(
 
     print(
         "make_summary input:",
-        summary[:200]
-    )
-
-    print(
-        "make_summary input length:",
-        len(summary)
+        summary
     )
 
     if not summary:
         return ""
 
-    # اگر خلاصه تقریباً همان تیتر است، دوباره تکرارش نکن
+    # اگر خلاصه خیلی شبیه تیتر است،
+    # آن را حذف نکن؛ چون ممکن است همان خلاصه واقعی خبر باشد.
+    # در مرحله بعد، هوش مصنوعی آن را بازنویسی می‌کند.
     if similar(title, summary):
 
-       if len(summary) < 120:
-          return summary
+        if len(summary) < 120:
+            return summary
 
-       return ""
+        return summary
 
-    # یکدست کردن فاصله‌ها
-    summary = re.sub(
-        r"\s+",
-        " ",
-        summary
-    ).strip()
-
-    # حذف عبارت‌های رایج خبرگزاری‌ها
+    # حذف عبارت‌های رایج ابتدای خلاصه
     prefixes = [
-        "به گزارش ",
-        "به نقل از ",
-        "در این گزارش ",
-        "در همین رابطه ",
-        "به گزارش خبرنگار ",
-        "به نقل از خبرنگار ",
-        "وی در ادامه گفت:",
-        "وی افزود:",
-        "او افزود:"
+        "تهران- ایرنا-",
+        "تهران - ایرنا -",
+        "تهران-ایرنا-",
+        "تهران - ایرنا-",
+        "ایرنا-",
+        "ایرنا -",
+        "به گزارش ایرنا،",
+        "به گزارش ایرنا:",
+        "به گزارش ایرنا",
+        "رویترز:",
+        "رویترز -"
     ]
 
     for prefix in prefixes:
 
         if summary.startswith(prefix):
-            summary = summary[len(prefix):].strip()
 
-    # حذف عبارت‌های تبلیغاتی یا ادبی
-    soft_phrases = [
-        "حماسه‌آفرینی",
-        "حماسه آفرینی",
-        "حماسه‌ها",
-        "حماسه ها",
-        "لحظه‌ای تردید نمی‌کنند",
-        "لحظه ای تردید نمی کنند",
-        "با افتخار",
-        "مایه افتخار",
-        "دشمن‌شکن",
-        "دشمن شکن",
-        "تاریخی و ماندگار"
-    ]
+            summary = summary[
+                len(prefix):
+            ].strip()
 
-    for phrase in soft_phrases:
-
-        summary = summary.replace(
-            phrase,
-            ""
-        )
-
-    # یکدست کردن فاصله‌ها بعد از حذف
+    # فاصله‌های اضافی
     summary = re.sub(
         r"\s+",
         " ",
         summary
     ).strip()
 
-    # حذف نشانه‌های اضافی ابتدای متن
-    summary = re.sub(
-        r"^[،؛:.\-–—]+\s*",
-        "",
-        summary
-    ).strip()
+    if not summary:
+        return ""
 
-    # اگر متن خیلی کوتاه است، همان را نگه دار
+    # خلاصه‌های کوتاه را بدون تغییر نگه می‌داریم
     if len(summary) <= 180:
         return summary
 
-    # اگر متن طولانی است، ابتدا فقط تا حدود 240 کاراکتر نگه دار
-    shortened = summary[:240]
-
-    # ترجیح با پایان طبیعی جمله یا عبارت است
-    last_break = max(
-        shortened.rfind("،"),
-        shortened.rfind("."),
-        shortened.rfind("؛"),
-        shortened.rfind("؟")
-    )
-
-    if last_break >= 120:
-
-        summary = shortened[
-            :last_break + 1
-        ].strip()
-
-    else:
-
-        summary = (
-            shortened
-            .rsplit(" ", 1)[0]
-            .strip()
-        )
-
+    # مهم:
+    # اینجا دیگر متن را با [:240] یا مشابه آن قطع نمی‌کنیم.
+    # متن کامل RSS باید به هوش مصنوعی برسد تا خودش
+    # یک خلاصه کوتاه و کامل تولید کند.
     return summary
 
 
