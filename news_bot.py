@@ -1522,6 +1522,37 @@ def save_news_history(item):
             e
         )
 
+def load_news_history():
+
+    history_file = "news_history.json"
+
+    try:
+
+        if not os.path.exists(history_file):
+            return []
+
+        with open(
+            history_file,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            history = json.load(f)
+
+        if not isinstance(history, list):
+            return []
+
+        return history
+
+    except Exception as e:
+
+        print(
+            "Could not load news history:",
+            e
+        )
+
+        return []
+
 def main():
 
     print(
