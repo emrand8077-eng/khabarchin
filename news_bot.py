@@ -973,6 +973,7 @@ def make_summary(
     if similar(title, summary):
         return ""
 
+    # یکدست کردن فاصله‌ها
     summary = re.sub(
         r"\s+",
         " ",
@@ -997,7 +998,7 @@ def make_summary(
         if summary.startswith(prefix):
             summary = summary[len(prefix):].strip()
 
-    # حذف عبارت‌های تبلیغاتی یا ادبی رایج
+    # حذف عبارت‌های تبلیغاتی یا ادبی
     soft_phrases = [
         "حماسه‌آفرینی",
         "حماسه آفرینی",
@@ -1019,7 +1020,7 @@ def make_summary(
             ""
         )
 
-    # مرتب کردن فاصله‌ها بعد از حذف عبارت‌ها
+    # یکدست کردن فاصله‌ها بعد از حذف
     summary = re.sub(
         r"\s+",
         " ",
@@ -1033,27 +1034,34 @@ def make_summary(
         summary
     ).strip()
 
-    # کوتاه کردن متن
-    if len(summary) > 300:
+    # اگر متن خیلی کوتاه است، همان را نگه دار
+    if len(summary) <= 180:
+        return summary
 
-        shortened = summary[:300]
+    # اگر متن طولانی است، ابتدا فقط تا حدود 240 کاراکتر نگه دار
+    shortened = summary[:240]
 
-        last_break = max(
-            shortened.rfind("،"),
-            shortened.rfind("."),
-            shortened.rfind("؛"),
-            shortened.rfind("؟")
+    # ترجیح با پایان طبیعی جمله یا عبارت است
+    last_break = max(
+        shortened.rfind("،"),
+        shortened.rfind("."),
+        shortened.rfind("؛"),
+        shortened.rfind("؟")
+    )
+
+    if last_break >= 120:
+
+        summary = shortened[
+            :last_break + 1
+        ].strip()
+
+    else:
+
+        summary = (
+            shortened
+            .rsplit(" ", 1)[0]
+            .strip()
         )
-
-        if last_break > 160:
-            summary = shortened[:last_break + 1].strip()
-
-        else:
-            summary = (
-                shortened
-                .rsplit(" ", 1)[0]
-                + "..."
-            )
 
     return summary
 
