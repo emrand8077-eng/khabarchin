@@ -2093,6 +2093,7 @@ def main():
             print(
                 "Published successfully."
             )
+            break
 
         else:
 
