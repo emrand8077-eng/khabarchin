@@ -733,18 +733,15 @@ def similar(a, b):
     if not a or not b:
         return False
 
-    # اگر یکی تقریباً شامل دیگری باشد
-    shorter = min(len(a), len(b))
-    longer = max(len(a), len(b))
+    # اگر دو متن خیلی کوتاه باشند،
+    # مقایسه شباهت می‌تواند اشتباه باشد.
+    if len(a) < 25 or len(b) < 25:
+        return False
 
-    if shorter >= 30:
+    # ==========================================
+    # حذف عبارت‌های خبری عمومی
+    # ==========================================
 
-        if shorter / longer >= 0.65:
-
-            if a in b or b in a:
-                return True
-
-    # حذف بعضی کلمات عمومی برای مقایسه بهتر
     common_words = [
         "گفت",
         "اعلام کرد",
@@ -757,21 +754,20 @@ def similar(a, b):
         "در گفت‌وگو",
         "در گفتگو",
         "آخرین",
-        "جدیدترین",
-        "ایران",
-        "ایرانی",
-        "تهران"
+        "جدیدترین"
     ]
 
     for word in common_words:
 
+        word = normalize(word)
+
         a = a.replace(
-            normalize(word),
+            word,
             " "
         )
 
         b = b.replace(
-            normalize(word),
+            word,
             " "
         )
 
@@ -787,17 +783,47 @@ def similar(a, b):
         b
     ).strip()
 
-    # مقایسه شباهت کلی
+    if not a or not b:
+        return False
+
+    # ==========================================
+    # اگر یکی تقریباً همان متن دیگری باشد
+    # ==========================================
+
+    shorter = min(
+        len(a),
+        len(b)
+    )
+
+    longer = max(
+        len(a),
+        len(b)
+    )
+
+    if shorter >= 30:
+
+        if shorter / longer >= 0.65:
+
+            if a in b or b in a:
+                return True
+
+    # ==========================================
+    # شباهت کلی متن
+    # ==========================================
+
     ratio = SequenceMatcher(
         None,
         a,
         b
     ).ratio()
 
-    if ratio >= 0.68:
+    if ratio >= 0.72:
         return True
 
+    # ==========================================
     # استخراج کلمات معنادار
+    # ==========================================
+
     stop_words = {
         "به",
         "از",
@@ -821,11 +847,13 @@ def similar(a, b):
         "هست",
         "خواهد",
         "می‌شود",
-        "می‌شود",
         "درباره",
         "پس",
         "هم",
-        "نیز"
+        "نیز",
+        "ایران",
+        "ایرانی",
+        "تهران"
     }
 
     words_a = {
@@ -847,7 +875,10 @@ def similar(a, b):
 
     common = words_a & words_b
 
-    # اگر چند کلمه کلیدی مهم مشترک باشند
+    # ==========================================
+    # شباهت بر اساس کلمات کلیدی
+    # ==========================================
+
     smaller_set = min(
         len(words_a),
         len(words_b)
@@ -855,14 +886,12 @@ def similar(a, b):
 
     if smaller_set >= 4:
 
-        if len(common) >= 3:
+        common_ratio = (
+            len(common) / smaller_set
+        )
 
-            common_ratio = (
-                len(common) / smaller_set
-            )
-
-            if common_ratio >= 0.60:
-                return True
+        if len(common) >= 3 and common_ratio >= 0.65:
+            return True
 
     return False
 
