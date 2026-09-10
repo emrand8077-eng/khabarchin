@@ -909,13 +909,12 @@ def clean_title(title):
         title
     ).strip()
 
-    # اگر تیتر خیلی طولانی بود،
-    # اولویت با پایان کامل جمله است.
-    if len(title) > 110:
+    # اگر تیتر خیلی طولانی بود
+    if len(title) > 90:
 
-        shortened = title[:110]
+        shortened = title[:90]
 
-        # آخرین نقطه مناسب برای بریدن
+        # اولویت با جداکننده‌های طبیعی
         last_break = max(
             shortened.rfind("؛"),
             shortened.rfind("،"),
@@ -923,7 +922,7 @@ def clean_title(title):
             shortened.rfind("!")
         )
 
-        if last_break >= 60:
+        if last_break >= 45:
 
             title = shortened[
                 :last_break + 1
