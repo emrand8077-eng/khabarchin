@@ -1539,7 +1539,8 @@ def main():
 
         post = make_post(
             item["title"],
-            item["summary"]
+            item["summary"],
+            item["source"]
         )
 
         # خبر انگلیسی فعلاً رد می‌شود
