@@ -1374,81 +1374,55 @@ def make_post(
         summary
     )
 
-    if summary:
+    if not title:
+        return None
 
-        title = rewrite_title_with_ai(
-            original_title,
-            summary
-        )
+    # یک درخواست واحد به Groq برای تیتر و خلاصه
+    ai_result = rewrite_news_with_ai(
+        title,
+        summary
+    )
 
-        title = clean_title(
+    if ai_result:
+
+        title = ai_result.get(
+            "title",
             title
-        )
+        ).strip()
+
+        summary = ai_result.get(
+            "summary",
+            summary
+        ).strip()
+
+    title = clean_title(title)
 
     if not title:
         return None
 
+    # اگر خبر انگلیسی بود، Groq باید آن را ترجمه کرده باشد.
+    # اگر ترجمه ناموفق بود و هنوز عنوان انگلیسی بود، منتشر نکن.
     if is_english(original_title):
 
-        translated = translate_foreign_news_with_ai(
-            original_title,
-            summary
-        )
-
-        if not translated:
+        if is_english(title):
+            print(
+                "Rejected: foreign news translation failed"
+            )
             return None
-
-        title = translated["title"]
-        summary = translated["summary"]
-
-    else:
-
-        if summary:
-
-            if (
-                len(summary) > 180
-                or is_summary_incomplete(
-                    title,
-                    summary
-                )
-            ):
-
-                summary = rewrite_summary_with_ai(
-                    title,
-                    summary
-                )
-
-    if not title:
-        return None
-
-    if summary:
-
-        if not quality_check(
-            title,
-            summary
-        ):
-            return None
-
-        return (
-            f"<b>{html.escape(title)}</b>"
-            f"\n\n"
-            f"{html.escape(summary)}"
-            f"\n\n"
-            f"@MeRan_ir | {html.escape(source)}"
-        )
 
     if not quality_check(
         title,
-        ""
+        summary
     ):
         return None
 
     return (
         f"<b>{html.escape(title)}</b>"
         f"\n\n"
+        f"{html.escape(summary)}"
+        f"\n\n"
         f"@MeRan_ir | {html.escape(source)}"
     )
-
 
 # =========================
 # دریافت فید
