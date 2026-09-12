@@ -1151,58 +1151,74 @@ def is_summary_incomplete(
     return False
 
 
-def rewrite_summary_with_ai(
+def rewrite_news_with_ai(
     title,
     summary
 ):
 
-    if not summary:
-        return ""
-
     prompt = f"""
-تو دبیر ارشد یک کانال خبری فارسی هستی.
+متن خبری زیر را به یک پست خبری حرفه‌ای، روان و قابل انتشار در تلگرام تبدیل کن.
 
-عنوان:
+عنوان خام:
 {title}
 
 متن موجود از خبر:
 {summary}
 
-وظیفه:
-این متن را به یک خلاصه خبری کامل، دقیق و طبیعی برای تلگرام تبدیل کن.
+قواعد:
 
-قوانین بسیار مهم:
+1. تیتر
+- کوتاه، خبری، طبیعی و جذاب باشد.
+- مهم‌ترین اتفاق یا ادعای خبر را منتقل کند.
+- اگر عنوان خام ناقص یا بریده شده، با استفاده از اطلاعات موجود در متن آن را کامل کن.
+- نام منبع یا خبرگزاری را از ابتدای تیتر حذف کن.
+- حداکثر 90 کاراکتر.
+- نتیجه‌ای فراتر از متن خبر القا نکن.
 
-- فقط از اطلاعات موجود در متن استفاده کن.
-- هیچ اطلاعاتی را حدس نزن و چیزی از خودت اضافه نکن.
+2. متن خبر
+- اصل خبر را در ابتدای متن بیان کن.
+- مهم‌ترین اطلاعات را حفظ کن.
+- اگر خبر چند نکته مهم دارد، نکات ضروری را حذف نکن.
+- متن را روان و طبیعی بنویس.
+- از تکرار خودداری کن.
+- معمولاً 1 تا 3 پاراگراف کوتاه کافی است.
+
+3. دقت خبری
+- هیچ اطلاعات جدیدی اضافه نکن.
+- هیچ عدد، تاریخ، نام، سمت یا مکان جدیدی اضافه نکن.
+- اگر متن شامل «ادعا کرد»، «به گفته»، «گزارش شده» یا عبارت مشابه است، همان سطح عدم قطعیت را حفظ کن.
+- ادعا را به عنوان واقعیت قطعی مطرح نکن.
+- نقل‌قول‌های مهم را دقیق حفظ کن.
 - معنی خبر را تغییر نده.
-- همه نکات مهمی که در متن وجود دارند را حفظ کن.
-- اگر خبر شامل چند مورد، چند تصمیم، چند روش، چند عدد یا چند شخص است، موارد مهم را حذف نکن.
-- اگر متن فقط به یک موضوع اشاره کرده ولی جزئیات آن را نداده، جزئیات را حدس نزن.
-- نام افراد، سمت‌ها، سازمان‌ها، کشورها، مکان‌ها، اعداد و تاریخ‌ها را دقیق حفظ کن.
-- اگر متن شامل «مدعی شد»، «به گفته»، «ادعا کرد»، «بر اساس گزارش» یا عبارت مشابه است، این نسبت دادن را حفظ کن.
-- خبر را به‌عنوان واقعیت قطعی جلوه نده اگر منبع آن را به شکل ادعا مطرح کرده است.
-- از تکرار غیرضروری عنوان خودداری کن.
-- لحن خبری، ساده، روان و بی‌طرف باشد.
-- از لحن تبلیغاتی، احساسی، زرد یا طنز استفاده نکن.
-- خلاصه معمولاً 1 یا 2 جمله باشد.
-- فقط خلاصه نهایی را بنویس.
 
-خلاصه نهایی:
+4. لحن
+- خبری، حرفه‌ای، روان و جدی باشد.
+- تبلیغاتی، احساسی، زرد یا توهین‌آمیز نباشد.
+- از تحلیل سیاسی یا نظر شخصی خودت استفاده نکن.
+- کنایه فقط در صورتی مجاز است که کاملاً از متن خبر پشتیبانی شود.
+
+5. زبان
+- اگر متن انگلیسی است، آن را به فارسی روان و خبری ترجمه کن.
+- نام افراد، سازمان‌ها، کشورها، مکان‌ها، اعداد و تاریخ‌ها را دقیق حفظ کن.
+- اگر خبر خارجی با ایران یا موضوعات منطقه‌ای مرتبط است، ارتباط موجود در متن را حفظ کن.
+
+6. خروجی
+فقط تیتر و خلاصه را در قالب JSON برگردان.
+هیچ توضیح دیگری ننویس.
 """
 
     try:
 
         response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
+            "https://api.groq.com/openai/v1/chat/completions",
             headers={
                 "Authorization":
-                    f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                    f"Bearer {os.getenv('GROQ_API_KEY')}",
                 "Content-Type":
                     "application/json"
             },
             json={
-                "model": "openrouter/free",
+                "model": "openai/gpt-oss-20b",
                 "messages": [
                     {
                         "role": "user",
@@ -1210,216 +1226,85 @@ def rewrite_summary_with_ai(
                     }
                 ],
                 "temperature": 0.2,
-                "max_tokens": 180
+                "max_tokens": 500,
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "news_post",
+                        "strict": True,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "title",
+                                "summary"
+                            ],
+                            "additionalProperties": False
+                        }
+                    }
+                }
             },
             timeout=30
         )
 
         if response.status_code != 200:
-            return summary
+
+            print(
+                "Groq error:",
+                response.text
+            )
+
+            return {
+                "title": title,
+                "summary": summary
+            }
 
         data = response.json()
 
-        result = (
+        result = json.loads(
             data["choices"][0]["message"]["content"]
-            .strip()
         )
 
-        if result:
-            return result
+        new_title = result.get(
+            "title",
+            ""
+        ).strip()
+
+        new_summary = result.get(
+            "summary",
+            ""
+        ).strip()
+
+        if not new_title or not new_summary:
+
+            return {
+                "title": title,
+                "summary": summary
+            }
+
+        return {
+            "title": new_title,
+            "summary": new_summary
+        }
 
     except Exception as e:
 
         print(
-            "AI summary error:",
+            "Groq AI error:",
             e
         )
 
-    return summary
-
-
-def rewrite_title_with_ai(
-    title,
-    summary
-):
-
-    prompt = f"""
-تو یک دبیر حرفه‌ای خبر برای یک کانال تلگرامی فارسی هستی.
-
-عنوان خام:
-{title}
-
-خلاصه خبر:
-{summary}
-
-وظیفه:
-عنوان خبر را به یک تیتر فارسی کوتاه، کامل، طبیعی و خبری تبدیل کن.
-
-قوانین بسیار مهم:
-- فقط بر اساس اطلاعات موجود در عنوان و خلاصه بنویس.
-- هیچ اطلاعات جدیدی اضافه نکن.
-- معنی خبر را تغییر نده.
-- نام افراد، کشورها، سازمان‌ها، مکان‌ها و اعداد را حفظ کن.
-- اگر عنوان خام ناقص یا بریده شده، آن را با استفاده از اطلاعات موجود در خلاصه کامل کن.
-- نام خبرگزاری یا منبع را از ابتدای تیتر حذف کن.
-- تیتر حداکثر 90 کاراکتر باشد.
-- از لحن تبلیغاتی، احساسی، زرد یا طنز استفاده نکن.
-- فقط خود تیتر را بنویس و هیچ توضیح دیگری نده.
-
-تیتر نهایی:
-"""
-
-    try:
-
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization":
-                    f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
-                "Content-Type":
-                    "application/json"
-            },
-            json={
-                "model": "openrouter/free",
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                "temperature": 0.2,
-                "max_tokens": 100
-            },
-            timeout=30
-        )
-
-        if response.status_code != 200:
-            return title
-
-        data = response.json()
-
-        result = (
-            data["choices"][0]["message"]["content"]
-            .strip()
-        )
-
-        if not result:
-            return title
-
-        result = result.replace(
-            "تیتر نهایی:",
-            ""
-        ).strip()
-
-        if len(result) > 100:
-            result = result[:100].rsplit(
-                " ",
-                1
-            )[0].strip()
-
-        return result
-
-    except Exception:
-        return title
-
-
-def translate_foreign_news_with_ai(
-    title,
-    summary
-):
-
-    prompt = f"""
-تو یک مترجم و ویراستار حرفه‌ای خبر برای یک کانال تلگرامی فارسی هستی.
-
-عنوان انگلیسی:
-{title}
-
-خلاصه انگلیسی:
-{summary}
-
-وظیفه:
-این خبر را به فارسی روان و خبری ترجمه کن.
-
-قوانین:
-- معنی خبر را دقیق حفظ کن.
-- هیچ اطلاعات جدیدی اضافه نکن.
-- نام افراد، سازمان‌ها، مکان‌ها، عددها و تاریخ‌ها را حفظ کن.
-- لحن خبری، ساده و بی‌طرف باشد.
-- از لحن تبلیغاتی یا احساسی استفاده نکن.
-- عنوان فارسی کوتاه و طبیعی باشد.
-- خلاصه حداکثر 2 جمله باشد.
-- فقط در قالب زیر پاسخ بده:
-
-TITLE:
-عنوان فارسی
-
-SUMMARY:
-خلاصه فارسی
-"""
-
-    try:
-
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization":
-                    f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
-                "Content-Type":
-                    "application/json"
-            },
-            json={
-                "model": "openrouter/free",
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                "temperature": 0.2,
-                "max_tokens": 250
-            },
-            timeout=30
-        )
-
-        if response.status_code != 200:
-            return None
-
-        data = response.json()
-
-        result = (
-            data["choices"][0]["message"]["content"]
-            .strip()
-        )
-
-        if "TITLE:" not in result:
-            return None
-
-        if "SUMMARY:" not in result:
-            return None
-
-        title_part = result.split(
-            "TITLE:",
-            1
-        )[1]
-
-        title_part, summary_part = title_part.split(
-            "SUMMARY:",
-            1
-        )
-
-        translated_title = title_part.strip()
-        translated_summary = summary_part.strip()
-
-        if not translated_title:
-            return None
-
         return {
-            "title": translated_title,
-            "summary": translated_summary
+            "title": title,
+            "summary": summary
         }
-
-    except Exception:
-        return None
 
 
 def quality_check(
