@@ -1255,7 +1255,27 @@ def rewrite_news_with_ai(
                 "temperature": 0.2,
                 "max_completion_tokens": 700,
                 "response_format": {
-                    "type": "json_object"
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "news_post",
+                        "strict": True,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "title",
+                                "summary"
+                            ],
+                            "additionalProperties": False
+                        }
+                    }
                 }
             },
             timeout=30
