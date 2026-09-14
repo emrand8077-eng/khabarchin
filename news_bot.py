@@ -253,6 +253,10 @@ def is_relevant(
         title + " " + summary
     )
 
+    english_text = (
+        title + " " + summary
+    ).lower()
+
     # ==========================================
     # موضوعات اصلی کانال
     # ==========================================
@@ -262,12 +266,16 @@ def is_relevant(
         "جنگ",
         "حمله",
         "موشک",
+        "پهپاد",
         "هسته‌ای",
         "هسته ای",
         "مذاکره",
         "برجام",
+        "توافق هسته‌ای",
+        "توافق هسته ای",
         "تنگه هرمز",
         "هرمز",
+        "خلیج فارس",
         "نفت",
         "بنزین",
         "دلار",
@@ -288,6 +296,7 @@ def is_relevant(
         "زلزله",
         "سیل",
         "آتش سوزی",
+        "آتش‌سوزی",
         "قطعی برق",
         "خاموشی"
     ]
@@ -305,6 +314,7 @@ def is_relevant(
         "مجلس ایران",
         "بانک مرکزی ایران",
         "وزیر خارجه ایران",
+        "وزیر امور خارجه ایران",
         "رئیس جمهور ایران",
         "رئیس‌جمهور ایران",
         "سپاه پاسداران",
@@ -315,6 +325,7 @@ def is_relevant(
         "ظریف",
         "عراقچی",
         "خامنه‌ای",
+        "خامنه ای",
         "رهبر ایران"
     ]
 
@@ -324,11 +335,13 @@ def is_relevant(
 
     important_people_orgs = [
         "خامنه‌ای",
+        "خامنه ای",
         "رهبر",
         "رئیس جمهور",
         "رئیس‌جمهور",
         "رئیس مجلس",
         "وزیر امور خارجه",
+        "وزیر خارجه",
         "وزیر کشور",
         "وزیر نفت",
         "رئیس بانک مرکزی",
@@ -401,77 +414,6 @@ def is_relevant(
                 return False
 
     # ==========================================
-    # خبرهای خارجی
-    # فقط اگر مستقیماً با ایران مرتبط باشند
-    # ==========================================
-
-    if source in [
-        "Al Jazeera",
-        "Mehr"
-    ]:
-
-        english_text = (
-            title + " " + summary
-        ).lower()
-
-        iran_related_english = [
-            "iran",
-            "iranian",
-            "tehran",
-            "iran's",
-            "iran’s",
-            "iran nuclear",
-            "iranian nuclear",
-            "iran sanctions",
-            "sanctions on iran",
-            "iranian economy",
-            "iranian government",
-            "iranian president",
-            "iranian foreign minister",
-            "iranian military",
-            "iranian oil",
-            "iranian missiles",
-            "iranian talks",
-            "iran nuclear deal",
-            "nuclear deal with iran",
-            "strait of hormuz",
-            "hormuz"
-        ]
-
-        for keyword in iran_related_english:
-
-            if keyword in english_text:
-                return True
-
-        # اگر خبر خارجی درباره موضوعات منطقه‌ای
-        # بسیار مرتبط با ایران باشد
-        regional_topics = [
-            "yemen",
-            "houthis",
-            "israel",
-            "israeli",
-            "lebanon",
-            "gaza",
-            "middle east",
-            "red sea",
-            "saudi arabia",
-            "iraq",
-            "syria",
-            "hormuz"
-        ]
-
-        for keyword in regional_topics:
-
-            if keyword in english_text:
-
-                for iran_word in iran_related_english:
-
-                    if iran_word in english_text:
-                        return True
-
-        return False
-
-    # ==========================================
     # تشخیص زمینه ایران
     # ==========================================
 
@@ -496,10 +438,208 @@ def is_relevant(
             break
 
     # ==========================================
+    # خبرهای خارجی
+    # ==========================================
+
+    if source in [
+        "Al Jazeera",
+        "Mehr"
+    ]:
+
+        # ==========================================
+        # عبارت‌های مستقیم مربوط به ایران
+        # ==========================================
+
+        iran_related_english = [
+            "iran",
+            "iranian",
+            "tehran",
+            "iran's",
+            "iran’s",
+            "iranian government",
+            "iranian president",
+            "iranian foreign minister",
+            "iranian military",
+            "iranian army",
+            "iranian revolutionary guard",
+            "revolutionary guard",
+            "iran nuclear",
+            "iranian nuclear",
+            "iran nuclear deal",
+            "nuclear deal with iran",
+            "iran sanctions",
+            "sanctions on iran",
+            "iranian economy",
+            "iranian oil",
+            "iranian missiles",
+            "iranian drones",
+            "iranian talks",
+            "talks with iran",
+            "negotiations with iran",
+            "iran negotiations",
+            "iran war",
+            "war with iran",
+            "iran conflict",
+            "iran attack",
+            "attack on iran",
+            "iranian attack",
+            "iranian strikes",
+            "iran strikes",
+            "iranian forces",
+            "iranian-backed",
+            "iran backed"
+        ]
+
+        has_english_iran = False
+
+        for keyword in iran_related_english:
+
+            if keyword in english_text:
+                has_english_iran = True
+                break
+
+        if has_english_iran:
+            return True
+
+        # ==========================================
+        # موضوعات منطقه‌ای مهم
+        # ==========================================
+
+        regional_topics = [
+            "strait of hormuz",
+            "hormuz",
+            "persian gulf",
+            "gulf",
+            "red sea",
+            "yemen",
+            "houthis",
+            "houthi",
+            "iraq",
+            "iraqi",
+            "israel",
+            "israeli",
+            "lebanon",
+            "hezbollah",
+            "gaza",
+            "syria",
+            "syrian",
+            "saudi arabia",
+            "saudi",
+            "qatar",
+            "bahrain",
+            "oman",
+            "middle east",
+            "middle eastern",
+            "united arab emirates",
+            "uae"
+        ]
+
+        has_regional_topic = False
+
+        for keyword in regional_topics:
+
+            if keyword in english_text:
+                has_regional_topic = True
+                break
+
+        # ==========================================
+        # موضوعات امنیتی / نظامی مرتبط با منطقه
+        # ==========================================
+
+        regional_security_topics = [
+            "missile",
+            "missiles",
+            "drone",
+            "drones",
+            "airstrike",
+            "airstrikes",
+            "strike",
+            "strikes",
+            "attack",
+            "attacks",
+            "war",
+            "military",
+            "military operation",
+            "naval",
+            "ship",
+            "shipping",
+            "tanker",
+            "oil tanker",
+            "oil",
+            "pipeline",
+            "port",
+            "rocket",
+            "rockets",
+            "bombing",
+            "bombed",
+            "ceasefire",
+            "sanctions",
+            "nuclear",
+            "negotiations",
+            "talks"
+        ]
+
+        has_security_topic = False
+
+        for keyword in regional_security_topics:
+
+            if keyword in english_text:
+                has_security_topic = True
+                break
+
+        # ==========================================
+        # خبرهای منطقه‌ای با ارتباط مستقیم به
+        # مسیرهای انرژی، حمل‌ونقل یا امنیت
+        # ==========================================
+
+        strategic_regional_topics = [
+            "strait of hormuz",
+            "hormuz",
+            "persian gulf",
+            "red sea",
+            "oil",
+            "oil tanker",
+            "tanker",
+            "shipping",
+            "shipping route",
+            "pipeline",
+            "energy",
+            "naval"
+        ]
+
+        has_strategic_topic = False
+
+        for keyword in strategic_regional_topics:
+
+            if keyword in english_text:
+                has_strategic_topic = True
+                break
+
+        # ==========================================
+        # منطقه + موضوع امنیتی/استراتژیک
+        # ==========================================
+
+        if has_regional_topic and has_security_topic:
+
+            return True
+
+        if has_regional_topic and has_strategic_topic:
+
+            return True
+
+        # ==========================================
+        # اگر خبر منطقه‌ای است اما صرفاً یک خبر
+        # عادی و غیرمرتبط است، رد شود
+        # ==========================================
+
+        return False
+
+    # ==========================================
     # خبر مستقیم درباره ایران
     # ==========================================
 
     if has_iran_context and has_core_topic:
+
         return True
 
     # ==========================================
@@ -511,6 +651,7 @@ def is_relevant(
     for keyword in important_people_orgs:
 
         if normalize(keyword) in text:
+
             has_important_person = True
             break
 
@@ -535,13 +676,16 @@ def is_relevant(
     for keyword in political_topics:
 
         if normalize(keyword) in text:
+
             has_political_topic = True
             break
 
     if has_iran_context and has_important_person:
+
         return True
 
     if has_iran_context and has_political_topic:
+
         return True
 
     # ==========================================
@@ -552,6 +696,7 @@ def is_relevant(
         "جنگ",
         "حمله",
         "موشک",
+        "پهپاد",
         "تحریم",
         "هسته‌ای",
         "هسته ای",
@@ -559,12 +704,15 @@ def is_relevant(
         "برجام",
         "تنگه هرمز",
         "هرمز",
+        "خلیج فارس",
         "نفت",
         "بنزین",
         "دلار",
         "تورم",
         "اعتراض",
-        "انفجار"
+        "انفجار",
+        "آتش سوزی",
+        "آتش‌سوزی"
     ]
 
     for keyword in very_important:
