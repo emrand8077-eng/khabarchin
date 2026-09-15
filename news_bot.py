@@ -2210,7 +2210,8 @@ def main():
 
         previous_news = find_previous_similar_news(
             item["title"],
-            history
+            history,
+            item["summary"]
         )
 
         if previous_news:
