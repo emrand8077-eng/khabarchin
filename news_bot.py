@@ -1706,6 +1706,16 @@ def make_post(
     if not title:
         return None
 
+    print(
+        "Original title:",
+        original_title
+    )
+
+    print(
+        "Is original title English:",
+        is_english(original_title)
+    )
+
     # اگر خبر انگلیسی بود، Groq باید آن را ترجمه کرده باشد.
     # اگر ترجمه ناموفق بود و هنوز عنوان انگلیسی بود، منتشر نکن.
     if is_english(original_title):
