@@ -1744,6 +1744,16 @@ def make_post(
     ):
         return None
 
+    print(
+        "Final post title:",
+        title
+    )
+
+    print(
+        "Final post summary:",
+        summary
+    )
+
     return (
         f"<b>{html.escape(title)}</b>"
         f"\n\n"
