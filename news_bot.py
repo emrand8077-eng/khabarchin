@@ -88,13 +88,14 @@ IMPORTANT_WORDS = [
 # =========================
 # منابع
 # =========================
-
 FEEDS = [
     ("Entekhab", "https://www.entekhab.ir/fa/rss/allnews"),
     ("Tasnim", "https://www.tasnimnews.ir/fa/rss"),
     ("IRNA", "https://www.irna.ir/rss"),
     ("Mehr", "https://en.mehrnews.com/rss"),
+    ("ISNA", "https://www.isna.ir/rss"),
     ("Al Jazeera", "https://www.aljazeera.com/xml/rss/all.xml"),
+    ("AP", "https://feeds.apnews.com/rss/apf-topnews"),
 ]
 
 # =========================
