@@ -1720,11 +1720,23 @@ def make_post(
     # اگر ترجمه ناموفق بود و هنوز عنوان انگلیسی بود، منتشر نکن.
     if is_english(original_title):
 
-        if is_english(title):
-            print(
-                "Rejected: foreign news translation failed"
-            )
-            return None
+    print(
+        "Checking foreign title:",
+        title
+    )
+
+    print(
+        "Is translated title English:",
+        is_english(title)
+    )
+
+    if is_english(title):
+
+        print(
+            "Rejected: foreign news translation failed"
+        )
+
+        return None
 
     if not quality_check(
         title,
