@@ -221,6 +221,8 @@ def is_english(text):
     if not text:
         return False
 
+    text = text.strip()
+
     english_chars = len(
         re.findall(
             r"[A-Za-z]",
@@ -235,9 +237,23 @@ def is_english(text):
         )
     )
 
-    return (
-        english_chars > persian_chars
-    )
+    # اگر متن هیچ حرف انگلیسی نداشته باشد
+    if english_chars == 0:
+        return False
+
+    # اگر هیچ حرف فارسی نداشته باشد،
+    # وجود حروف انگلیسی یعنی متن انگلیسی است.
+    if persian_chars == 0:
+        return True
+
+    # اگر حروف انگلیسی حداقل به اندازه حروف فارسی باشند،
+    # متن را انگلیسی در نظر می‌گیریم.
+    if english_chars >= persian_chars:
+        return True
+
+    # اگر بخش انگلیسی خیلی کوچک باشد،
+    # متن فارسی محسوب می‌شود.
+    return False
 
 
 # =========================
