@@ -2019,20 +2019,84 @@ def load_news_history():
 
 def find_previous_similar_news(
     title,
-    history
+    history,
+    summary=""
 ):
+
+    title = title.strip()
+    summary = summary.strip()
 
     for old_news in history:
 
         old_title = old_news.get(
             "title",
             ""
-        )
+        ).strip()
+
+        old_summary = old_news.get(
+            "summary",
+            ""
+        ).strip()
+
+        if not old_title:
+            continue
+
+        # ==========================================
+        # 1. شباهت مستقیم تیترها
+        # ==========================================
 
         if similar(
             title,
             old_title
         ):
+
+            print(
+                "Duplicate detected by title:",
+                old_title
+            )
+
+            return old_news
+
+        # ==========================================
+        # 2. اگر خلاصه خبر جدید و قبلی موجود باشد،
+        #    خلاصه‌ها را هم بررسی کن
+        # ==========================================
+
+        if summary and old_summary:
+
+            if similar(
+                summary,
+                old_summary
+            ):
+
+                print(
+                    "Duplicate detected by summary:",
+                    old_title
+                )
+
+                return old_news
+
+        # ==========================================
+        # 3. بررسی ترکیبی عنوان + خلاصه
+        # ==========================================
+
+        current_text = (
+            title + " " + summary
+        )
+
+        old_text = (
+            old_title + " " + old_summary
+        )
+
+        if similar(
+            current_text,
+            old_text
+        ):
+
+            print(
+                "Duplicate detected by full text:",
+                old_title
+            )
 
             return old_news
 
