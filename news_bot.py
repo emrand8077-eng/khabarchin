@@ -742,10 +742,15 @@ def importance_score(
         title + " " + summary
     )
 
+    english_title = title.lower()
+    english_text = (
+        title + " " + summary
+    ).lower()
+
     score = 0
 
     # ==========================================
-    # ارتباط با ایران
+    # ارتباط با ایران - فارسی
     # ==========================================
 
     if "ایران" in title_text or "تهران" in title_text:
@@ -755,7 +760,38 @@ def importance_score(
         score += 1
 
     # ==========================================
-    # موضوعات بسیار مهم
+    # ارتباط با ایران - انگلیسی
+    # ==========================================
+
+    english_iran_words = [
+        "iran",
+        "iranian",
+        "tehran",
+        "iran's",
+        "iran’s"
+    ]
+
+    has_iran_english = False
+
+    for word in english_iran_words:
+
+        if word in english_title:
+
+            score += 2
+            has_iran_english = True
+            break
+
+    if not has_iran_english:
+
+        for word in english_iran_words:
+
+            if word in english_text:
+
+                score += 1
+                break
+
+    # ==========================================
+    # موضوعات بسیار مهم - فارسی
     # ==========================================
 
     very_important = [
@@ -790,7 +826,50 @@ def importance_score(
             score += 1
 
     # ==========================================
-    # موضوعات مهم سیاسی و اقتصادی
+    # موضوعات بسیار مهم - انگلیسی
+    # ==========================================
+
+    very_important_english = [
+        "war",
+        "attack",
+        "attacks",
+        "missile",
+        "missiles",
+        "sanction",
+        "sanctions",
+        "nuclear",
+        "nuclear deal",
+        "negotiation",
+        "negotiations",
+        "talks",
+        "hormuz",
+        "strait of hormuz",
+        "oil",
+        "oil tanker",
+        "tanker",
+        "gasoline",
+        "diesel",
+        "dollar",
+        "inflation",
+        "central bank",
+        "protest",
+        "protests",
+        "explosion",
+        "explosions",
+        "fire",
+        "fires"
+    ]
+
+    for word in very_important_english:
+
+        if word in english_title:
+            score += 3
+
+        elif word in english_text:
+            score += 1
+
+    # ==========================================
+    # موضوعات مهم سیاسی و اقتصادی - فارسی
     # ==========================================
 
     important = [
@@ -827,7 +906,44 @@ def importance_score(
             score += 1
 
     # ==========================================
-    # مقام‌های ارشد
+    # موضوعات مهم سیاسی و اقتصادی - انگلیسی
+    # ==========================================
+
+    important_english = [
+        "government",
+        "parliament",
+        "president",
+        "supreme leader",
+        "military",
+        "army",
+        "economy",
+        "economic",
+        "currency",
+        "budget",
+        "stock market",
+        "strike",
+        "strikes",
+        "livelihood",
+        "trade",
+        "foreign policy",
+        "foreign relations",
+        "national security",
+        "energy",
+        "shipping",
+        "shipping route",
+        "pipeline"
+    ]
+
+    for word in important_english:
+
+        if word in english_title:
+            score += 1
+
+        elif word in english_text:
+            score += 1
+
+    # ==========================================
+    # مقام‌های ارشد - فارسی
     # ==========================================
 
     senior_officials = [
@@ -851,6 +967,26 @@ def importance_score(
             score += 1
 
     # ==========================================
+    # مقام‌های ارشد - انگلیسی
+    # ==========================================
+
+    senior_officials_english = [
+        "president",
+        "supreme leader",
+        "foreign minister",
+        "foreign ministry",
+        "interior minister",
+        "oil minister",
+        "central bank governor",
+        "national security council"
+    ]
+
+    for word in senior_officials_english:
+
+        if word in english_title:
+            score += 1
+
+    # ==========================================
     # اعتبار منبع
     # ==========================================
 
@@ -859,7 +995,10 @@ def importance_score(
         "Tasnim": 1,
         "Entekhab": 2,
         "Mehr": 1,
-        "Al Jazeera": 2
+        "ISNA": 1,
+        "Al Jazeera": 2,
+        "AP": 2,
+        "Reuters": 2
     }
 
     score += trusted.get(
