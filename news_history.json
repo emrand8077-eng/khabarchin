@@ -1,12 +1,5 @@
 [
   {
-    "title": "الیور استون: آمریکا تشنه جنگ است",
-    "summary": "تهران -ایرنا - یک فیلم ساز سرشناس آمریکایی و برنده جایزه اسکار، از تداوم رویکرد نظامی‌گرایانه آمریکا انتقاد کرد و ضمن اشاره به «تشنگی» این کشور برای جنگ، نسبت به خطر وقوع درگیری‌های حتی بزرگ‌تر هشدار داد.",
-    "source": "IRNA",
-    "link": "https://www.irna.ir/news/86266282/%DA%A9%D8%A7%D8%B1%DA%AF%D8%B1%D8%AF%D8%A7%D9%86-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7%DB%8C%DB%8C-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%AA%D8%B4%D9%86%D9%87-%D8%AC%D9%86%DA%AF-%D8%A7%D8%B3%D8%AA",
-    "published_at": "2026-09-16T20:31:36.353052"
-  },
-  {
     "title": "قیمت بنزین در آمریکا در آستانه افزایش‌های سرسام‌آور",
     "summary": "تهران -ایرنا - به گفته تحلیلگران آمریکایی، مردم این کشور در روزهای چهارشنبه و پنجشنبه شاهد جهش قابل‌توجه قیمت بنزین خواهند بود زیرا تداوم درگیری‌ها در اوکراین و ایران بر عرضه جهانی نفت فشار وارد کرده است.",
     "source": "IRNA",
@@ -698,5 +691,12 @@
     "source": "Al Jazeera",
     "link": "https://www.aljazeera.com/news/2026/9/18/south-korea-says-us-north-korea-talks-possible-rules-out-hormuz-deployment?traffic_source=rss",
     "published_at": "2026-09-18T05:29:55.809136"
+  },
+  {
+    "title": "UN mission alleges crimes against humanity in Iranian protest crackdown",
+    "summary": "A UN fact-finding mission has concluded Iranian forces committed crimes against humanity.",
+    "source": "Al Jazeera",
+    "link": "https://www.aljazeera.com/video/newsfeed/2026/9/18/un-mission-alleges-crimes-against-humanity-in-iranian-protest-crackdown?traffic_source=rss",
+    "published_at": "2026-09-18T05:47:44.674057"
   }
 ]
