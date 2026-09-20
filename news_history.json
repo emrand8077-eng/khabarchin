@@ -1,12 +1,5 @@
 [
   {
-    "title": "Houthis accuse Saudi Arabia of launching 26 strikes in 24 hours",
-    "summary": "The war in Yemen intensifies with mounting clashes and reciprocal attacks between Saudi forces and the Houthis.",
-    "source": "Al Jazeera",
-    "link": "https://www.aljazeera.com/news/2026/9/18/houthis-accuse-saudi-arabia-of-launching-26-strikes-in-24-hours?traffic_source=rss",
-    "published_at": "2026-09-18T23:29:24.096887"
-  },
-  {
     "title": "Mosque explosion in Pakistan kills 17, wounds dozens",
     "summary": "TEHRAN, Sep. 18 (MNA) – A powerful bomb exploded Friday at a mosque near a building housing police offices in northwestern Pakistan, killing at least 17 people and wounding 57, media reporting police and rescue officials as saying.",
     "source": "Mehr",
@@ -698,5 +691,12 @@
     "source": "Al Jazeera",
     "link": "https://www.aljazeera.com/video/newsfeed/2026/9/20/there-will-be-a-very-sizeable-saudi-response-to-houthi-attacks?traffic_source=rss",
     "published_at": "2026-09-20T10:46:28.553253"
+  },
+  {
+    "title": "Israeli forces fire artillery at Lebanese towns",
+    "summary": "TEHRAN, Sep. 20 (MNA) – Israeli forces have continued their attacks on southern Lebanon overnight, local sources reported.",
+    "source": "Mehr",
+    "link": "https://en.mehrnews.com/news/247908/Israeli-forces-fire-artillery-at-Lebanese-towns",
+    "published_at": "2026-09-20T11:10:03.738690"
   }
 ]
