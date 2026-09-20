@@ -1,12 +1,5 @@
 [
   {
-    "title": "Israeli strike on motorcycle kills Palestinian in Gaza City, injures child",
-    "summary": "Separate attacks struck central refugee camps as officials warned Gaza's health sector faces total collapse.",
-    "source": "Al Jazeera",
-    "link": "https://www.aljazeera.com/news/2026/9/19/israeli-strike-on-motorcycle-in-gaza-city-kills-one-injures-child?traffic_source=rss",
-    "published_at": "2026-09-19T01:09:39.189293"
-  },
-  {
     "title": "دفاع مدنی عربستان بعد از اعلام فعال شدن سامانه هشدار زودهنگام: خطر از جده، طائف، ینبع، ابها، خمیس مشیط و جازان برطرف شد",
     "summary": "جنگ سوم و تجاوز نظامی اخیر آمریکا به ایران وارد روز هفتادم شد. در حالی که از روز آتش بس نقض شده میان دو کشور ۱۶۵ روز می‌گذرد، ترامپ مدعی شد جنگ با ایران به‌زودی پایان خواهد یافت. او پیش از آن نیز ادعا کرده بود ایرانی‌ها الان می‌خواهند به توافق برسند؛ اگر توافق، توافقِ درستی نباشد، به آن فکر هم نمی‌کنم.",
     "source": "Entekhab",
@@ -698,5 +691,12 @@
     "source": "Entekhab",
     "link": "https://www.entekhab.ir/fa/news/940203/پزشکیان-تغییر-در-نگرش-افراد-و-عملکردها-زمان-بر-است-از-این-رو-نیازمند-هم-فکری-و-تعامل-همه-جانبه-هستیم",
     "published_at": "2026-09-20T12:34:58.062410"
+  },
+  {
+    "title": "Gaza’s children return to classrooms after years of Israeli attacks",
+    "summary": "Palestinian children have returned to classrooms after Israel destroyed Gaza’s schools.",
+    "source": "Al Jazeera",
+    "link": "https://www.aljazeera.com/video/newsfeed/2026/9/20/gazas-children-return-to-classrooms-after-years-of-israeli-attacks?traffic_source=rss",
+    "published_at": "2026-09-20T12:50:29.778473"
   }
 ]
