@@ -1,12 +1,5 @@
 [
   {
-    "title": "Israeli army attacks Talloussah in southern Lebanon",
-    "summary": "TEHRAN, Sep. 24 (MNA) – Israeli forces have carried out air raids on the outskirts of Talloussah town in southern Lebanon’s Marjayoun district.",
-    "source": "Mehr",
-    "link": "https://en.mehrnews.com/news/248047/Israeli-army-attacks-Talloussah-in-southern-Lebanon",
-    "published_at": "2026-09-24T09:32:45.031823"
-  },
-  {
     "title": "رئیس قوه قضائیه: رئیس‌جمهور در سازمان ملل با صلابت و استوار، از حقوق حقه مردم ایران دفاع کرد",
     "summary": "رئیس قوه قضائیه نوشت: رئیس‌جمهوری با صلابت و استوار از حقوق حقه مردم ایران دفاع و جانیان آمریکایی و صهیونیستی را رسوا کرد.",
     "source": "Entekhab",
@@ -698,5 +691,12 @@
     "source": "Al Jazeera",
     "link": "https://www.aljazeera.com/news/2026/9/25/trump-hails-very-productive-talks-with-chinas-xi?traffic_source=rss",
     "published_at": "2026-09-25T18:33:40.641651"
+  },
+  {
+    "title": "Iraqi airports halt Iranian flights after new US aviation sanctions",
+    "summary": "Baghdad, Najaf, Erbil and Sulaimaniyah airports suspend flights as US ramps up pressure on Iran's aviation sector.",
+    "source": "Al Jazeera",
+    "link": "https://www.aljazeera.com/news/2026/9/25/iraqi-airports-halt-iranian-flights-after-new-us-aviation-sanctions?traffic_source=rss",
+    "published_at": "2026-09-25T18:50:25.442892"
   }
 ]
