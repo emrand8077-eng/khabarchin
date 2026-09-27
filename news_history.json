@@ -1,12 +1,5 @@
 [
   {
-    "title": "Trump hails ‘very productive’ talks with China’s Xi",
-    "summary": "Xi says future of China-US ties 'bright' after state visit that included discussions about Iran and AI cooperation.",
-    "source": "Al Jazeera",
-    "link": "https://www.aljazeera.com/news/2026/9/25/trump-hails-very-productive-talks-with-chinas-xi?traffic_source=rss",
-    "published_at": "2026-09-25T18:33:40.641651"
-  },
-  {
     "title": "Iraqi airports halt Iranian flights after new US aviation sanctions",
     "summary": "Baghdad, Najaf, Erbil and Sulaimaniyah airports suspend flights as US ramps up pressure on Iran's aviation sector.",
     "source": "Al Jazeera",
@@ -698,5 +691,12 @@
     "source": "Mehr",
     "link": "https://en.mehrnews.com/news/248099/Tehran-blasts-NATO-support-for-US-military-aggression",
     "published_at": "2026-09-27T04:10:30.244872"
+  },
+  {
+    "title": "PGSA warns ships using invalid Hormuz routes",
+    "summary": "TEHRAN, Sep. 27 (MNA) – Iran's Persian Gulf Strait (PGSA) management authority warned vessels using invalid routes through the Strait of Hormuz that charterers forcing ships off approved paths will be added to a non-compliant list.",
+    "source": "Mehr",
+    "link": "https://en.mehrnews.com/news/248100/PGSA-warns-ships-using-invalid-Hormuz-routes",
+    "published_at": "2026-09-27T04:32:11.402940"
   }
 ]
