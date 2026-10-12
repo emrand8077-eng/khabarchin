@@ -1,12 +1,5 @@
 [
   {
-    "title": "Did the biggest week of diplomacy make headway in ending the US-Iran war?",
-    "summary": "The UN General Assembly wraps up with mixed diplomatic outcomes.",
-    "source": "Al Jazeera",
-    "link": "https://www.aljazeera.com/video/newsfeed/2026/9/27/did-the-biggest-week-of-diplomacy-make-headway-in-ending-the-us-iran-war?traffic_source=rss",
-    "published_at": "2026-09-27T02:32:09.144510"
-  },
-  {
     "title": "تأکید لاوروف بر غیرقانونی بودن تجاوز به ایران در مجمع عمومی سازمان ملل",
     "summary": "مسکو- ایرنا- وزیر امور خارجه روسیه گفت: ما ترور آیت‌الله سید علی خامنه‌ای رهبر عالی ایران به همراه اعضای خانواده و دیگر مقامات ارشد نظامی و سیاسی تهران را جلوه‌ای غیرقابل‌قبول از تحمیل اراده با توسل به زور می‌دانیم.",
     "source": "IRNA",
@@ -698,5 +691,12 @@
     "source": "Mehr",
     "link": "https://en.mehrnews.com/news/248502/Third-oil-tanker-catches-fire-in-Strait-of-Hormuz",
     "published_at": "2026-10-12T09:22:42.534449"
+  },
+  {
+    "title": "Oil tanker reportedly attacked in Strait of Hormuz region",
+    "summary": "Plumes of black smoke rise from a Petro Dolphin oil tanker by a drone attack off the coast of Oman.",
+    "source": "Al Jazeera",
+    "link": "https://www.aljazeera.com/video/newsfeed/2026/10/12/oil-tanker-reportedly-attacked-in-strait-of-hormuz-region?traffic_source=rss",
+    "published_at": "2026-10-12T19:18:28.424856"
   }
 ]
