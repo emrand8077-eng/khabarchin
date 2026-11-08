@@ -1,12 +1,5 @@
 [
   {
-    "title": "Fire engulfs Albania’s Supreme Court as protests enter fifth day",
-    "summary": "Offices at the Supreme Court in Tirana were set ablaze as anti-government protests continue.",
-    "source": "Al Jazeera",
-    "link": "https://www.aljazeera.com/video/newsfeed/2026/10/18/albania-protests-supreme-court-fire?traffic_source=rss",
-    "published_at": "2026-10-18T22:28:37.552507"
-  },
-  {
     "title": "‘Father of Iranian missiles’ ready to hit enemy energy sites",
     "summary": "TEHRAN, Oct. 18 (MNA) – A senior adviser to the commander-in-chief of the IRGC warns that the “father of Iranian missiles” is ready to pummel the enemy's energy infrastructure and investments across the region should aggression resumes.",
     "source": "Mehr",
@@ -698,5 +691,12 @@
     "source": "Mehr",
     "link": "https://en.mehrnews.com/news/249207/Advancing-air-defense-sys-IRGC-Aerospace-s-key-achievements",
     "published_at": "2026-11-07T23:26:21.849248"
+  },
+  {
+    "title": "Iran war live: US moves to block land supply routes; UAE rescues 22 sailors",
+    "summary": "Iranian state media report blasts on Qeshm Island in Strait of Hormuz and the cities of Jask, Sirik and Bandar Abbas.",
+    "source": "Al Jazeera",
+    "link": "https://www.aljazeera.com/news/liveblog/2026/11/8/iran-war-live-explosions-hit-qeshm-us-moves-to-block-land-supply-routes?traffic_source=rss",
+    "published_at": "2026-11-08T02:41:27.317901"
   }
 ]
